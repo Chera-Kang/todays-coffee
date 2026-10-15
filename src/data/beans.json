@@ -1,0 +1,79 @@
+[
+  {
+    "id": "sbux-espresso",
+    "name": "스타벅스 에스프레소 로스트",
+    "brand": "스타벅스",
+    "brandId": "starbucks",
+    "roast": 5,
+    "acidity": 1,
+    "body": 5,
+    "tags": ["다크초콜릿", "스모키", "카라멜", "묵직한 바디"],
+    "description": "스타벅스 모든 에스프레소 음료의 심장. 캐러멜 풍미와 스모키하고 묵직한 여운이 특징인 다크 로스트 원두입니다."
+  },
+  {
+    "id": "sbux-blonde",
+    "name": "스타벅스 블론드 에스프레소",
+    "brand": "스타벅스",
+    "brandId": "starbucks",
+    "roast": 2,
+    "acidity": 4,
+    "body": 2,
+    "tags": ["시트러스", "은은한 단맛", "과일향", "부드러움"],
+    "description": "더 가볍게 로스팅하여 섬세하고 산뜻한 감귤류의 산미와 부드러운 단맛을 살린 시그니처 블론드 원두입니다."
+  },
+  {
+    "id": "sbux-decaf",
+    "name": "스타벅스 디카페인 에스프레소",
+    "brand": "스타벅스",
+    "brandId": "starbucks",
+    "roast": 4,
+    "acidity": 2,
+    "body": 4,
+    "tags": ["구운 견과류", "초콜릿", "디카페인", "고소한 풍미"],
+    "description": "스위스 워터 프로세스로 카페인을 99% 이상 안전하게 제거하면서도 풍부한 에스프레소 로스트의 향을 유지했습니다."
+  },
+  {
+    "id": "mega-premium",
+    "name": "메가 프리미엄 블렌드",
+    "brand": "메가커피",
+    "brandId": "megacoffee",
+    "roast": 4,
+    "acidity": 2,
+    "body": 4,
+    "tags": ["고소한 견과류", "밀크초콜릿", "밸런스", "산미적음"],
+    "description": "브라질과 콜롬비아 원두를 균형 있게 배합하여 대용량 음료에서도 끝까지 유지되는 고소함과 묵직함을 완성했습니다."
+  },
+  {
+    "id": "compose-bitterholic",
+    "name": "컴포즈 비터홀릭 스페셜티",
+    "brand": "컴포즈커피",
+    "brandId": "compose",
+    "roast": 4,
+    "acidity": 2,
+    "body": 5,
+    "tags": ["카카오", "구운 아몬드", "흑설탕", "스페셜티"],
+    "description": "브라질 스페셜티 베이스에 콜롬비아와 에티오피아를 블렌딩하여 진한 카카오 풍미와 입안을 감싸는 바디감을 줍니다."
+  },
+  {
+    "id": "paul-signature",
+    "name": "폴바셋 시그니처 블렌드",
+    "brand": "폴바셋",
+    "brandId": "paulbassett",
+    "roast": 3,
+    "acidity": 4,
+    "body": 4,
+    "tags": ["자스민 꽃향", "카카오", "와이니 산미", "롱고 최적화"],
+    "description": "브라질과 에티오피아 원두의 조화로 달콤한 자스민 향과 세련된 과일 산미, 은은한 카카오 피니시가 돋보입니다."
+  },
+  {
+    "id": "paul-ethiopia",
+    "name": "폴바셋 에티오피아 싱글오리진",
+    "brand": "폴바셋",
+    "brandId": "paulbassett",
+    "roast": 2,
+    "acidity": 5,
+    "body": 2,
+    "tags": ["베리류", "플로럴", "밝은 산미", "청량감"],
+    "description": "풍부한 과일의 상큼함과 화사한 꽃 향기가 돋보이는 대표적인 약배전 싱글 오리진 원두입니다."
+  }
+]

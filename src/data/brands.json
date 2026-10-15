@@ -1,0 +1,74 @@
+[
+  {
+    "id": "starbucks",
+    "name": "스타벅스",
+    "nameEn": "Starbucks",
+    "color": "#00704A",
+    "secondaryColor": "#1E3932",
+    "description": "진하고 묵직한 다크 로스팅과 일관된 품질을 자랑하는 글로벌 스페셜티 커피의 상징",
+    "tagline": "깊은 스모키함과 안정적인 밸런스",
+    "americanoInfo": {
+      "name": "카페 아메리카노 (Tall)",
+      "volume": 355,
+      "price": 4700,
+      "pricePer100ml": 1324,
+      "caffeine": 150,
+      "calories": 10
+    },
+    "features": ["다크 & 블론드 2종 원두 선택", "디카페인 전 메뉴 옵션", "정교한 커스텀 음료"]
+  },
+  {
+    "id": "megacoffee",
+    "name": "메가커피",
+    "nameEn": "MEGA COFFEE",
+    "color": "#D4A017",
+    "secondaryColor": "#292524",
+    "description": "압도적인 대용량과 부담 없는 가격, 고소한 한국인 맞춤형 블렌드의 데일리 커피",
+    "tagline": "풍부한 용량과 진한 고소함",
+    "americanoInfo": {
+      "name": "아메리카노 (HOT/ICE)",
+      "volume": 680,
+      "price": 2000,
+      "pricePer100ml": 294,
+      "caffeine": 193,
+      "calories": 18
+    },
+    "features": ["24oz(약 680ml) 메가 사이즈", "가성비 뛰어난 원두 블렌드", "다양한 제로/다이어트 옵션"]
+  },
+  {
+    "id": "compose",
+    "name": "컴포즈커피",
+    "nameEn": "COMPOSE COFFEE",
+    "color": "#E69C24",
+    "secondaryColor": "#1C1917",
+    "description": "자체 대규모 로스팅 팩토리 기반 비터홀릭 스페셜티 블렌드를 합리적인 가격에 제공",
+    "tagline": "비터홀릭 스페셜티 블렌드의 정석",
+    "americanoInfo": {
+      "name": "아메리카노 (Grande)",
+      "volume": 591,
+      "price": 1500,
+      "pricePer100ml": 254,
+      "caffeine": 156,
+      "calories": 15
+    },
+    "features": ["100% 아라비카 스페셜티 베이스", "테이크아웃 최적화 가격", "자체 생두 직수입 & 로스팅"]
+  },
+  {
+    "id": "paulbassett",
+    "name": "폴바셋",
+    "nameEn": "Paul Bassett",
+    "color": "#A6192E",
+    "secondaryColor": "#1F1D1D",
+    "description": "월드 바리스타 챔피언의 철학이 담긴 정통 룽고와 상하목장 아이스크림 라떼의 명가",
+    "tagline": "섬세한 산미와 프리미엄 에스프레소",
+    "americanoInfo": {
+      "name": "룽고 (Standard)",
+      "volume": 360,
+      "price": 5700,
+      "pricePer100ml": 1583,
+      "caffeine": 160,
+      "calories": 20
+    },
+    "features": ["정통 룽고(Lungo) 추출 방식", "상하목장 원유 페어링", "스페셜티 싱글 오리진 라인업"]
+  }
+]

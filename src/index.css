@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  }
+
+  body {
+    background-color: #FAF8F5;
+    color: #231915;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Prevent Safari mobile auto-zoom on input focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Custom scrollbar-hide utility */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Subtle transitions & smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom editorial theme colors */
+:root {
+  --color-warm-bg: #FAF8F5;
+  --color-espresso: #231915;
+  --color-warm-gray: #78716C;
+  --color-terracotta: #D97757;
+  --color-sage: #5B7A5E;
+  --color-beige: #EFECE6;
+}
