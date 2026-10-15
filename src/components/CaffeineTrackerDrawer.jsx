@@ -31,8 +31,8 @@ export default function CaffeineTrackerDrawer({
               <Coffee className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="font-serif text-base font-bold text-[#231915]">
-                오늘 마신 커피 기록
+              <h2 className="text-base font-bold tracking-tight text-[#231915]">
+                오늘 마신 음료 기록
               </h2>
               <p className="text-[11px] text-[#78716C]">
                 총 {consumedList.length}잔 기록됨
@@ -134,7 +134,7 @@ export default function CaffeineTrackerDrawer({
                         {item.consumedAt}
                       </span>
                     </div>
-                    <h4 className="mt-1 font-serif text-sm font-bold text-[#231915]">
+                    <h4 className="mt-1 text-sm font-bold tracking-tight text-[#231915]">
                       {item.name}
                     </h4>
                   </div>

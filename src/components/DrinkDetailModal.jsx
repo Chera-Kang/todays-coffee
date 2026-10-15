@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Check, AlertCircle, Info, PlusCircle } from 'lucide-react';
+import DrinkThumbnail from './DrinkThumbnail';
 
 export default function DrinkDetailModal({
   drink,
@@ -35,7 +36,6 @@ export default function DrinkDetailModal({
     }
 
     // Disallowed special chars: !@#$%^&*() and symbols
-    // Only allow Korean, English, numbers, spaces, and simple hyphen/period
     const specialCharsRegex = /[!@#$%^&*()+=\[\]{};':"\\|<>/?~`]/;
     if (specialCharsRegex.test(val)) {
       setErrorMessage('특수문자(!@#$%^&*() 등)는 입력하실 수 없습니다.');
@@ -99,7 +99,7 @@ export default function DrinkDetailModal({
             <span className="rounded-full bg-[#FAF8F5] px-2.5 py-0.5 text-xs font-semibold text-[#78716C]">
               {drink.brand}
             </span>
-            <span className="text-xs text-[#78716C]">{drink.category}</span>
+            <span className="text-xs text-[#78716C]">· {drink.category}</span>
           </div>
           <button
             type="button"
@@ -111,20 +111,23 @@ export default function DrinkDetailModal({
         </div>
 
         {/* Scrollable Content */}
-        <div className="overflow-y-auto px-6 py-5 space-y-6">
-          {/* Title & Description */}
-          <div>
-            <h2 className="font-serif text-xl font-bold text-[#231915] sm:text-2xl">
-              {drink.name}
-            </h2>
-            <p className="mt-1.5 text-xs leading-relaxed text-[#78716C] sm:text-sm">
-              {drink.description}
-            </p>
-            {drink.boundaryTag && (
-              <span className="mt-2 inline-block rounded-md border border-[#EFECE6] bg-[#FAF8F5] px-2 py-0.5 text-[11px] font-medium text-[#78716C]">
-                🏷️ {drink.boundaryTag}
-              </span>
-            )}
+        <div className="overflow-y-auto px-6 py-5 space-y-5">
+          {/* Visual Thumbnail + Title & Description */}
+          <div className="flex items-start gap-4">
+            <DrinkThumbnail drink={drink} size={72} className="shrink-0" />
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl font-bold tracking-tight text-[#231915] sm:text-2xl leading-tight">
+                {drink.name}
+              </h2>
+              <p className="mt-1.5 text-xs leading-relaxed text-[#78716C] sm:text-sm">
+                {drink.description}
+              </p>
+              {drink.boundaryTag && (
+                <span className="mt-2 inline-flex items-center rounded-md border border-[#EFECE6] bg-[#FAF8F5] px-2 py-0.5 text-[11px] font-semibold text-[#574E4A]">
+                  #{drink.boundaryTag}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Nutrition Table (Grid Card) */}
@@ -170,7 +173,7 @@ export default function DrinkDetailModal({
               <span className="text-[11px] font-semibold text-[#78716C] uppercase tracking-wider">
                 매칭 원두 프로필
               </span>
-              <h4 className="mt-1 font-serif text-sm font-bold text-[#231915]">
+              <h4 className="mt-1 text-sm font-bold tracking-tight text-[#231915]">
                 {bean.name}
               </h4>
               <p className="mt-1 text-xs text-[#78716C] leading-relaxed">
@@ -202,7 +205,7 @@ export default function DrinkDetailModal({
           <form onSubmit={handleSubmit} className="rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] p-4">
             <div className="flex items-center justify-between">
               <label htmlFor="tasting-memo" className="text-xs font-bold text-[#231915]">
-                오늘 마신 커피 담기 & 한 줄 테이스팅 메모
+                오늘 마신 음료 담기 & 한 줄 테이스팅 메모
               </label>
               <span className="text-[11px] text-[#78716C]">
                 {memo.length} / 30자
@@ -216,7 +219,7 @@ export default function DrinkDetailModal({
                 value={memo}
                 onChange={handleMemoChange}
                 maxLength={30}
-                placeholder="예: 깔끔한 산미가 느껴져 오후에 제격 (선택 입력)"
+                placeholder="예: 산뜻하고 달콤해서 오후 리프레시에 제격 (선택 입력)"
                 className="w-full rounded-xl border border-[#EFECE6] bg-[#FFFFFF] px-3.5 py-2.5 text-base text-[#231915] placeholder:text-[#78716C]/60 focus:border-[#231915] focus:outline-none focus:ring-1 focus:ring-[#231915]"
               />
             </div>
@@ -246,7 +249,7 @@ export default function DrinkDetailModal({
               ) : (
                 <>
                   <PlusCircle className="h-4 w-4" />
-                  오늘 마신 커피에 담기 (+{drink.caffeine}mg)
+                  오늘 마신 음료에 담기 (+{drink.caffeine}mg)
                 </>
               )}
             </button>

@@ -37,7 +37,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
         <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-[11px] font-semibold tracking-wider text-[#78716C] uppercase">
           Specialty Bean Guide
         </span>
-        <h2 className="mt-2 font-serif text-2xl font-bold text-[#231915]">
+        <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-[#231915]">
           원두 프로필 & 테이스팅 노트
         </h2>
         <p className="mt-1 text-sm text-[#78716C]">
@@ -91,7 +91,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
                 </span>
               </div>
 
-              <h3 className="mt-2.5 font-serif text-lg font-bold text-[#231915]">
+              <h3 className="mt-2.5 text-lg font-bold tracking-tight text-[#231915]">
                 {bean.name}
               </h3>
               <p className="mt-1 text-xs text-[#78716C] leading-relaxed">

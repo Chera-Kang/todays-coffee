@@ -5,7 +5,7 @@ export const CURATION_PRESETS = [
   {
     id: 'all',
     label: '전체 음료',
-    subtitle: '모든 브랜드 24종',
+    subtitle: '8대 브랜드 45종',
     icon: LayoutGrid,
     filter: () => true,
     conditionText: '전체 메뉴 보기'
@@ -55,12 +55,12 @@ export default function HeroCuration({ selectedCuration, onSelectCuration }) {
         <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-[11px] font-semibold tracking-wider text-[#78716C] uppercase">
           Daily Curation Guide
         </span>
-        <h1 className="mt-3 font-serif text-2xl font-bold tracking-tight text-[#231915] sm:text-3xl sm:leading-snug">
+        <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-[#231915] sm:text-3xl sm:leading-snug">
           오늘 당신의 컨디션에는<br />
-          어떤 커피가 필요한가요?
+          어떤 음료가 필요한가요?
         </h1>
         <p className="mt-2 text-sm text-[#78716C] leading-relaxed">
-          국내 대표 4개 프랜차이즈의 영양성분과 원두 데이터를 분석하여, 현재 상태에 가장 이상적인 음료를 제안합니다.
+          국내 대표 8대 프랜차이즈의 커피부터 논커피까지, 영양성분과 원두 데이터를 분석해 가장 이상적인 한 잔을 제안합니다.
         </p>
       </div>
 

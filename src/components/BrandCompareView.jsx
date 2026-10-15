@@ -29,11 +29,11 @@ export default function BrandCompareView() {
         <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-[11px] font-semibold tracking-wider text-[#78716C] uppercase">
           Brand Intelligence
         </span>
-        <h2 className="mt-2 font-serif text-2xl font-bold text-[#231915]">
-          4대 커피 프랜차이즈 한눈에 비교
+        <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-[#231915]">
+          8대 커피 프랜차이즈 한눈에 비교
         </h2>
         <p className="mt-1 text-sm text-[#78716C]">
-          기본 아메리카노의 용량, 가격, 100ml당 단가와 메뉴별 카페인 특성을 비교 분석했습니다.
+          스타벅스, 메가커피, 컴포즈, 폴바셋, 투썸, 이디야, 빽다방, 할리스의 기본 아메리카노 용량, 가격, 100ml당 단가와 메뉴별 카페인 특성을 비교 분석했습니다.
         </p>
       </div>
 
@@ -52,7 +52,7 @@ export default function BrandCompareView() {
                     className="h-3.5 w-3.5 rounded-full shadow-xs"
                     style={{ backgroundColor: brand.color }}
                   />
-                  <h3 className="font-serif text-xl font-bold text-[#231915]">
+                  <h3 className="text-xl font-bold tracking-tight text-[#231915]">
                     {brand.name}
                   </h3>
                   <span className="text-xs text-[#78716C]">

@@ -18,11 +18,21 @@ import {
   clearConsumedCoffees
 } from './utils/storage';
 
-import { Search, RotateCcw, Filter, SlidersHorizontal } from 'lucide-react';
+import { Search, RotateCcw, Filter, Layers } from 'lucide-react';
+
+const CATEGORIES = [
+  { id: 'all', label: '전체 카테고리' },
+  { id: '에스프레소·커피', label: '에스프레소·커피' },
+  { id: '콜드브루', label: '콜드브루' },
+  { id: '디카페인', label: '디카페인' },
+  { id: '논커피·라떼', label: '논커피·라떼' },
+  { id: '티·에이드·스무디', label: '티·에이드·스무디' }
+];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('drinks'); // 'drinks' | 'beans' | 'brands'
   const [selectedCuration, setSelectedCuration] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBrand, setSelectedBrand] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('default'); // 'default' | 'caffeine-desc' | 'calories-asc' | 'sugar-asc'
@@ -66,20 +76,24 @@ export default function App() {
 
     return menusData
       .filter((drink) => {
-        // 1. Curation filter
+        // 1. Curation condition filter
         if (!curationFilter(drink)) return false;
 
-        // 2. Brand filter
+        // 2. Category filter
+        if (selectedCategory !== 'all' && drink.category !== selectedCategory) return false;
+
+        // 3. Brand filter
         if (selectedBrand !== 'all' && drink.brandId !== selectedBrand) return false;
 
-        // 3. Search keyword filter
+        // 4. Search keyword filter
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase().trim();
           const matchName = drink.name.toLowerCase().includes(q);
           const matchBrand = drink.brand.toLowerCase().includes(q);
           const matchDesc = drink.description.toLowerCase().includes(q);
           const matchCategory = drink.category.toLowerCase().includes(q);
-          if (!matchName && !matchBrand && !matchDesc && !matchCategory) {
+          const matchTag = drink.boundaryTag ? drink.boundaryTag.toLowerCase().includes(q) : false;
+          if (!matchName && !matchBrand && !matchDesc && !matchCategory && !matchTag) {
             return false;
           }
         }
@@ -92,10 +106,11 @@ export default function App() {
         if (sortBy === 'sugar-asc') return a.sugar - b.sugar;
         return 0;
       });
-  }, [selectedCuration, selectedBrand, searchQuery, sortBy]);
+  }, [selectedCuration, selectedCategory, selectedBrand, searchQuery, sortBy]);
 
   const handleResetFilters = () => {
     setSelectedCuration('all');
+    setSelectedCategory('all');
     setSelectedBrand('all');
     setSearchQuery('');
     setSortBy('default');
@@ -121,76 +136,101 @@ export default function App() {
               onSelectCuration={setSelectedCuration}
             />
 
-            {/* Sub-Filters & Search Bar Bar */}
-            <div className="flex flex-col gap-3 rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] p-4 shadow-xs lg:flex-row lg:items-center lg:justify-between">
-              {/* Brand Chips (Horizontal scroll) */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
-                <span className="hidden items-center gap-1 text-xs font-semibold text-[#78716C] lg:flex mr-1">
-                  <Filter className="h-3.5 w-3.5" />
-                  브랜드:
+            {/* Filter Hub: Category + Brand + Search/Sort */}
+            <div className="rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] p-4 shadow-xs space-y-3.5">
+              {/* Category Filter Chips (Top Row) */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+                <span className="hidden items-center gap-1 text-xs font-semibold text-[#78716C] lg:flex mr-1 shrink-0">
+                  <Layers className="h-3.5 w-3.5" />
+                  카테고리:
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setSelectedBrand('all')}
-                  className={`cursor-pointer shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${
-                    selectedBrand === 'all'
-                      ? 'bg-[#231915] text-[#FAF8F5]'
-                      : 'bg-[#FAF8F5] text-[#78716C] hover:text-[#231915]'
-                  }`}
-                >
-                  전체 브랜드
-                </button>
-                {brandsData.map((b) => (
+                {CATEGORIES.map((cat) => (
                   <button
-                    key={b.id}
+                    key={cat.id}
                     type="button"
-                    onClick={() => setSelectedBrand(b.id)}
+                    onClick={() => setSelectedCategory(cat.id)}
                     className={`cursor-pointer shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${
-                      selectedBrand === b.id
-                        ? 'bg-[#231915] text-[#FAF8F5]'
-                        : 'bg-[#FAF8F5] text-[#78716C] hover:text-[#231915]'
+                      selectedCategory === cat.id
+                        ? 'bg-[#231915] text-[#FAF8F5] shadow-xs'
+                        : 'border border-[#EFECE6] bg-[#FAF8F5] text-[#78716C] hover:text-[#231915]'
                     }`}
                   >
-                    {b.name}
+                    {cat.label}
                   </button>
                 ))}
               </div>
 
-              {/* Search & Sort Controls */}
-              <div className="flex flex-1 items-center gap-2 lg:max-w-md lg:justify-end">
-                {/* Search Input (16px font to prevent Safari zoom) */}
-                <div className="relative flex-1">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#78716C]" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="음료명, 카테고리 검색..."
-                    className="w-full rounded-xl border border-[#EFECE6] bg-[#FAF8F5] py-2 pl-9 pr-3 text-base text-[#231915] placeholder:text-[#78716C]/60 focus:border-[#231915] focus:bg-[#FFFFFF] focus:outline-none sm:text-xs"
-                  />
-                  {searchQuery && (
+              {/* Sub-Filters: Brand Chips & Search/Sort (Bottom Row) */}
+              <div className="flex flex-col gap-3 border-t border-[#EFECE6]/80 pt-3 lg:flex-row lg:items-center lg:justify-between">
+                {/* Brand Chips (Horizontal scroll) */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
+                  <span className="hidden items-center gap-1 text-xs font-semibold text-[#78716C] lg:flex mr-1 shrink-0">
+                    <Filter className="h-3.5 w-3.5" />
+                    브랜드:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedBrand('all')}
+                    className={`cursor-pointer shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${
+                      selectedBrand === 'all'
+                        ? 'bg-[#231915] text-[#FAF8F5]'
+                        : 'bg-[#FAF8F5] text-[#78716C] hover:text-[#231915]'
+                    }`}
+                  >
+                    8대 브랜드 전체
+                  </button>
+                  {brandsData.map((b) => (
                     <button
+                      key={b.id}
                       type="button"
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#78716C] hover:text-[#231915]"
+                      onClick={() => setSelectedBrand(b.id)}
+                      className={`cursor-pointer shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${
+                        selectedBrand === b.id
+                          ? 'bg-[#231915] text-[#FAF8F5]'
+                          : 'bg-[#FAF8F5] text-[#78716C] hover:text-[#231915]'
+                      }`}
                     >
-                      지우기
+                      {b.name}
                     </button>
-                  )}
+                  ))}
                 </div>
 
-                {/* Sort Select */}
-                <div className="shrink-0">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="cursor-pointer rounded-xl border border-[#EFECE6] bg-[#FAF8F5] px-3 py-2 text-xs font-medium text-[#231915] focus:border-[#231915] focus:outline-none"
-                  >
-                    <option value="default">기본순</option>
-                    <option value="caffeine-desc">카페인 높은순</option>
-                    <option value="calories-asc">칼로리 낮은순</option>
-                    <option value="sugar-asc">당류 낮은순</option>
-                  </select>
+                {/* Search & Sort Controls */}
+                <div className="flex flex-1 items-center gap-2 lg:max-w-md lg:justify-end">
+                  {/* Search Input (16px font to prevent Safari zoom) */}
+                  <div className="relative flex-1">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#78716C]" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="음료명, 카테고리, 태그 검색..."
+                      className="w-full rounded-xl border border-[#EFECE6] bg-[#FAF8F5] py-2 pl-9 pr-3 text-base text-[#231915] placeholder:text-[#78716C]/60 focus:border-[#231915] focus:bg-[#FFFFFF] focus:outline-none sm:text-xs"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#78716C] hover:text-[#231915]"
+                      >
+                        지우기
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Sort Select */}
+                  <div className="shrink-0">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="cursor-pointer rounded-xl border border-[#EFECE6] bg-[#FAF8F5] px-3 py-2 text-xs font-medium text-[#231915] focus:border-[#231915] focus:outline-none"
+                    >
+                      <option value="default">기본순</option>
+                      <option value="caffeine-desc">카페인 높은순</option>
+                      <option value="calories-asc">칼로리 낮은순</option>
+                      <option value="sugar-asc">당류 낮은순</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -200,14 +240,14 @@ export default function App() {
               <div>
                 <span>검색 결과: </span>
                 <strong className="text-[#231915]">{filteredDrinks.length}</strong>개 음료
-                {(selectedCuration !== 'all' || selectedBrand !== 'all' || searchQuery) && (
+                {(selectedCuration !== 'all' || selectedCategory !== 'all' || selectedBrand !== 'all' || searchQuery) && (
                   <span className="ml-2 text-[#78716C]">
                     (필터 적용 중)
                   </span>
                 )}
               </div>
 
-              {(selectedCuration !== 'all' || selectedBrand !== 'all' || searchQuery || sortBy !== 'default') && (
+              {(selectedCuration !== 'all' || selectedCategory !== 'all' || selectedBrand !== 'all' || searchQuery || sortBy !== 'default') && (
                 <button
                   type="button"
                   onClick={handleResetFilters}
@@ -232,11 +272,11 @@ export default function App() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#EFECE6] bg-[#FFFFFF] py-16 text-center">
-                <p className="font-serif text-base font-bold text-[#231915]">
+                <p className="text-base font-bold tracking-tight text-[#231915]">
                   조건에 일치하는 음료가 없습니다.
                 </p>
                 <p className="mt-1 text-xs text-[#78716C]">
-                  다른 컨디션 칩을 선택하시거나 검색어를 확인해 보세요.
+                  다른 카테고리나 브랜드 칩을 선택하시거나 검색어를 확인해 보세요.
                 </p>
                 <button
                   type="button"
@@ -284,9 +324,9 @@ export default function App() {
       {/* Subtle Editorial Footer */}
       <footer className="mt-16 border-t border-[#EFECE6] bg-[#FFFFFF] py-8 text-center text-xs text-[#78716C]">
         <div className="mx-auto max-w-6xl px-4 space-y-1">
-          <p className="font-serif font-bold text-[#231915]">오늘의커피 (Today's Coffee)</p>
+          <p className="font-bold tracking-tight text-[#231915]">오늘의커피 (Today's Coffee)</p>
           <p>
-            스타벅스 · 메가커피 · 컴포즈커피 · 폴바셋 공식 영양정보 기준 분석 데이터 제공
+            스타벅스 · 메가커피 · 컴포즈커피 · 폴바셋 · 투썸플레이스 · 이디야커피 · 빽다방 · 할리스 8대 브랜드 공식 영양정보 기준 분석 데이터 제공
           </p>
           <p className="text-[11px] text-[#78716C]/70">
             성인 일일 최대 카페인 권장량: 400mg | 당류 권장 섭취량: 50g 이하

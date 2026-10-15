@@ -25,7 +25,7 @@ export default function Header({
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-serif text-lg font-bold tracking-tight text-[#231915]">
+              <span className="text-lg font-extrabold tracking-tight text-[#231915]">
                 오늘의커피
               </span>
               <span className="hidden text-[10px] tracking-widest text-[#78716C] uppercase sm:inline-block">

@@ -70,5 +70,77 @@
       "calories": 20
     },
     "features": ["정통 룽고(Lungo) 추출 방식", "상하목장 원유 페어링", "스페셜티 싱글 오리진 라인업"]
+  },
+  {
+    "id": "twosome",
+    "name": "투썸플레이스",
+    "nameEn": "A TWOSOME PLACE",
+    "color": "#D62734",
+    "secondaryColor": "#212121",
+    "description": "블랙그라운드와 아로마노트 2가지 원두 선택권과 디저트 페어링의 프리미엄 유러피안 카페",
+    "tagline": "원두 선택의 자유와 풍부한 크레마",
+    "americanoInfo": {
+      "name": "아메리카노 (Regular)",
+      "volume": 414,
+      "price": 4700,
+      "pricePer100ml": 1135,
+      "caffeine": 170,
+      "calories": 15
+    },
+    "features": ["블랙그라운드 / 아로마노트 원두 선택", "디저트와 최고의 마리아주", "스페셜 콜드브루 라인업"]
+  },
+  {
+    "id": "ediya",
+    "name": "이디야커피",
+    "nameEn": "EDIYA COFFEE",
+    "color": "#1B3B8A",
+    "secondaryColor": "#0E2356",
+    "description": "자체 드림팩토리 로스팅 센터를 통해 고품질 커피를 합리적인 가격에 전하는 친근한 국민 브랜드",
+    "tagline": "드림팩토리의 균형 잡힌 밸런스",
+    "americanoInfo": {
+      "name": "아메리카노 (Large)",
+      "volume": 532,
+      "price": 3200,
+      "pricePer100ml": 601,
+      "caffeine": 152,
+      "calories": 12
+    },
+    "features": ["전국 최다 매장의 높은 접근성", "시그니처 토피넛 파우더 라인", "자체 R&D 드림팩토리 원두"]
+  },
+  {
+    "id": "paik",
+    "name": "빽다방",
+    "nameEn": "PAIK'S COFFEE",
+    "color": "#F5B800",
+    "secondaryColor": "#0A3078",
+    "description": "부담 없는 착한 가격과 넉넉한 대용량, 간얼음과 원조 아샷추로 유쾌한 에너지를 전하는 브랜드",
+    "tagline": "압도적인 용량과 활력 넘치는 가성비",
+    "americanoInfo": {
+      "name": "앗!메리카노 (HOT/ICE)",
+      "volume": 625,
+      "price": 2000,
+      "pricePer100ml": 320,
+      "caffeine": 237,
+      "calories": 13
+    },
+    "features": ["원조 아샷추(아이스티+샷추가)의 시초", "간얼음 / 각얼음 선택 옵션", "빽사이즈 초대용량 라인업"]
+  },
+  {
+    "id": "hollys",
+    "name": "할리스",
+    "nameEn": "HOLLYS",
+    "color": "#BA1828",
+    "secondaryColor": "#1C1917",
+    "description": "국내 최초의 에스프레소 전문점으로 시작해 시그니처 바닐라 딜라이트와 프리미엄 공간을 선사하는 브랜드",
+    "tagline": "부드러운 프리미엄 에스프레소의 정석",
+    "americanoInfo": {
+      "name": "아메리카노 (Grande)",
+      "volume": 473,
+      "price": 4500,
+      "pricePer100ml": 951,
+      "caffeine": 145,
+      "calories": 12
+    },
+    "features": ["독보적 1위 바닐라 딜라이트 파우더", "다양한 논커피 & 과일 스무디", "편안한 프리미엄 라운지 공간"]
   }
 ]

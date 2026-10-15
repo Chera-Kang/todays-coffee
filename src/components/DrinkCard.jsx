@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import DrinkThumbnail from './DrinkThumbnail';
 
 const BRAND_STYLES = {
   starbucks: {
@@ -21,6 +22,26 @@ const BRAND_STYLES = {
     badgeBg: 'bg-[#FAEAEC]',
     badgeText: 'text-[#A6192E]',
     dot: 'bg-[#A6192E]'
+  },
+  twosome: {
+    badgeBg: 'bg-[#FDF0F0]',
+    badgeText: 'text-[#D62734]',
+    dot: 'bg-[#D62734]'
+  },
+  ediya: {
+    badgeBg: 'bg-[#EDF2FA]',
+    badgeText: 'text-[#1B3B8A]',
+    dot: 'bg-[#1B3B8A]'
+  },
+  paik: {
+    badgeBg: 'bg-[#FEFCE8]',
+    badgeText: 'text-[#926004]',
+    dot: 'bg-[#F5B800]'
+  },
+  hollys: {
+    badgeBg: 'bg-[#FDF2F3]',
+    badgeText: 'text-[#BA1828]',
+    dot: 'bg-[#BA1828]'
   }
 };
 
@@ -49,7 +70,7 @@ export default function DrinkCard({ drink, onSelectDrink }) {
       className="group relative flex cursor-pointer flex-col justify-between rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#78716C]/40 hover:shadow-md"
     >
       <div>
-        {/* Top Header: Brand & Volume */}
+        {/* Top Header: Brand & Volume & Arrow */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5">
             <span
@@ -61,6 +82,9 @@ export default function DrinkCard({ drink, onSelectDrink }) {
             <span className="text-[11px] text-[#78716C]">
               {drink.volume}ml
             </span>
+            <span className="text-[10px] text-[#78716C]/70">
+              · {drink.category}
+            </span>
           </div>
 
           <div className="flex items-center text-[#78716C] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#231915]">
@@ -68,28 +92,33 @@ export default function DrinkCard({ drink, onSelectDrink }) {
           </div>
         </div>
 
-        {/* Drink Title & Description */}
-        <div className="mt-3">
-          <h3 className="font-serif text-base font-bold text-[#231915] group-hover:text-[#D97757] transition-colors">
-            {drink.name}
-          </h3>
-          <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[#78716C]">
-            {drink.description}
-          </p>
-        </div>
+        {/* Thumbnail + Title & Description Layout */}
+        <div className="mt-3.5 flex items-start gap-3.5">
+          {/* 64x64px SVG Drink Thumbnail */}
+          <DrinkThumbnail drink={drink} size={64} className="shrink-0" />
 
-        {/* Boundary Tag (if present) */}
-        {drink.boundaryTag && (
-          <div className="mt-2.5">
-            <span className="inline-block rounded-md border border-[#EFECE6] bg-[#FAF8F5] px-2 py-0.5 text-[10px] font-medium text-[#78716C]">
-              🏷️ {drink.boundaryTag}
-            </span>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base font-bold tracking-tight text-[#231915] group-hover:text-[#D97757] transition-colors leading-snug">
+              {drink.name}
+            </h3>
+            <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[#78716C]">
+              {drink.description}
+            </p>
+
+            {/* Refined Natural Curation Tag */}
+            {drink.boundaryTag && (
+              <div className="mt-2">
+                <span className="inline-flex items-center rounded-md border border-[#EFECE6] bg-[#FAF8F5] px-2 py-0.5 text-[10px] font-semibold text-[#574E4A]">
+                  #{drink.boundaryTag}
+                </span>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Progress Bars & Nutritional Badges */}
-      <div className="mt-5 space-y-3 border-t border-[#EFECE6]/70 pt-3.5">
+      <div className="mt-4 space-y-2.5 border-t border-[#EFECE6]/70 pt-3">
         {/* Caffeine Progress Bar */}
         <div>
           <div className="flex items-center justify-between text-[11px]">
@@ -152,7 +181,7 @@ export default function DrinkCard({ drink, onSelectDrink }) {
         </div>
 
         {/* Calorie & Protein Badges */}
-        <div className="flex items-center justify-between pt-1 text-[11px] text-[#78716C]">
+        <div className="flex items-center justify-between pt-0.5 text-[11px] text-[#78716C]">
           <span className="rounded-md bg-[#FAF8F5] px-2 py-0.5 font-medium">
             칼로리 <strong className="text-[#231915]">{drink.calories}</strong> kcal
           </span>
