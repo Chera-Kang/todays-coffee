@@ -37,3 +37,8 @@ Thumbs.db
 .agents/
 scratch/
 
+# Prompt and internal spec docs
+05_todays-coffee_init.md
+*_init.md
+
+

@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Header from './components/Header';
-import HeroCuration, { CURATION_PRESETS } from './components/HeroCuration';
+import RecommendationView from './components/RecommendationView';
+import UnifiedFilterPanel, { QUICK_CURATION_PRESETS } from './components/UnifiedFilterPanel';
 import DrinkCard from './components/DrinkCard';
 import DrinkDetailModal from './components/DrinkDetailModal';
-import CaffeineTrackerDrawer from './components/CaffeineTrackerDrawer';
+import CaffeineTrackerModal from './components/CaffeineTrackerModal';
 import BeanGuideView from './components/BeanGuideView';
 import BrandCompareView from './components/BrandCompareView';
 
 import menusData from './data/menus.json';
 import beansData from './data/beans.json';
-import brandsData from './data/brands.json';
 
 import {
   getConsumedCoffees,
@@ -18,19 +18,11 @@ import {
   clearConsumedCoffees
 } from './utils/storage';
 
-import { Search, RotateCcw, Filter, Layers } from 'lucide-react';
-
-const CATEGORIES = [
-  { id: 'all', label: '전체 카테고리' },
-  { id: '에스프레소·커피', label: '에스프레소·커피' },
-  { id: '콜드브루', label: '콜드브루' },
-  { id: '디카페인', label: '디카페인' },
-  { id: '논커피·라떼', label: '논커피·라떼' },
-  { id: '티·에이드·스무디', label: '티·에이드·스무디' }
-];
-
 export default function App() {
-  const [activeTab, setActiveTab] = useState('drinks'); // 'drinks' | 'beans' | 'brands'
+  // 1. Initial default active tab is 'recommendation'
+  const [activeTab, setActiveTab] = useState('recommendation'); // 'recommendation' | 'drinks' | 'beans' | 'brands'
+
+  // Filter States for 'drinks' tab
   const [selectedCuration, setSelectedCuration] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBrand, setSelectedBrand] = useState('all');
@@ -71,12 +63,12 @@ export default function App() {
 
   // Filtered & Sorted Drinks (Intersection Filter)
   const filteredDrinks = useMemo(() => {
-    const curationObj = CURATION_PRESETS.find((c) => c.id === selectedCuration);
+    const curationObj = QUICK_CURATION_PRESETS.find((c) => c.id === selectedCuration);
     const curationFilter = curationObj ? curationObj.filter : () => true;
 
     return menusData
       .filter((drink) => {
-        // 1. Curation condition filter
+        // 1. Quick Curation condition filter
         if (!curationFilter(drink)) return false;
 
         // 2. Category filter
@@ -118,7 +110,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#231915]">
-      {/* Global Navigation Header with Caffeine Tracker */}
+      {/* Global Navigation Header with 4 Tabs & Caffeine Tracker */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -128,114 +120,33 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+        {/* Tab 1: 커피 추천 (Blank Placeholder + Action to Explore) */}
+        {activeTab === 'recommendation' && (
+          <RecommendationView
+            onGoToExplore={() => setActiveTab('drinks')}
+          />
+        )}
+
+        {/* Tab 2: 음료 탐색 (Unified Filter Panel + Drinks Bento Grid) */}
         {activeTab === 'drinks' && (
           <div className="space-y-6">
-            {/* Editorial Hero Curation Section */}
-            <HeroCuration
+            {/* Unified 2-Tier Filter Panel */}
+            <UnifiedFilterPanel
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
               selectedCuration={selectedCuration}
-              onSelectCuration={setSelectedCuration}
+              setSelectedCuration={setSelectedCuration}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              selectedBrand={selectedBrand}
+              setSelectedBrand={setSelectedBrand}
+              onResetFilters={handleResetFilters}
+              resultCount={filteredDrinks.length}
             />
 
-            {/* Filter Hub: Category + Brand + Search/Sort */}
-            <div className="rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] p-4 shadow-xs space-y-3.5">
-              {/* Category Filter Chips (Top Row) */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-                <span className="hidden items-center gap-1 text-xs font-semibold text-[#78716C] lg:flex mr-1 shrink-0">
-                  <Layers className="h-3.5 w-3.5" />
-                  카테고리:
-                </span>
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`cursor-pointer shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${
-                      selectedCategory === cat.id
-                        ? 'bg-[#231915] text-[#FAF8F5] shadow-xs'
-                        : 'border border-[#EFECE6] bg-[#FAF8F5] text-[#78716C] hover:text-[#231915]'
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Sub-Filters: Brand Chips & Search/Sort (Bottom Row) */}
-              <div className="flex flex-col gap-3 border-t border-[#EFECE6]/80 pt-3 lg:flex-row lg:items-center lg:justify-between">
-                {/* Brand Chips (Horizontal scroll) */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
-                  <span className="hidden items-center gap-1 text-xs font-semibold text-[#78716C] lg:flex mr-1 shrink-0">
-                    <Filter className="h-3.5 w-3.5" />
-                    브랜드:
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedBrand('all')}
-                    className={`cursor-pointer shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${
-                      selectedBrand === 'all'
-                        ? 'bg-[#231915] text-[#FAF8F5]'
-                        : 'bg-[#FAF8F5] text-[#78716C] hover:text-[#231915]'
-                    }`}
-                  >
-                    8대 브랜드 전체
-                  </button>
-                  {brandsData.map((b) => (
-                    <button
-                      key={b.id}
-                      type="button"
-                      onClick={() => setSelectedBrand(b.id)}
-                      className={`cursor-pointer shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${
-                        selectedBrand === b.id
-                          ? 'bg-[#231915] text-[#FAF8F5]'
-                          : 'bg-[#FAF8F5] text-[#78716C] hover:text-[#231915]'
-                      }`}
-                    >
-                      {b.name}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Search & Sort Controls */}
-                <div className="flex flex-1 items-center gap-2 lg:max-w-md lg:justify-end">
-                  {/* Search Input (16px font to prevent Safari zoom) */}
-                  <div className="relative flex-1">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#78716C]" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="음료명, 카테고리, 태그 검색..."
-                      className="w-full rounded-xl border border-[#EFECE6] bg-[#FAF8F5] py-2 pl-9 pr-3 text-base text-[#231915] placeholder:text-[#78716C]/60 focus:border-[#231915] focus:bg-[#FFFFFF] focus:outline-none sm:text-xs"
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => setSearchQuery('')}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#78716C] hover:text-[#231915]"
-                      >
-                        지우기
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Sort Select */}
-                  <div className="shrink-0">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="cursor-pointer rounded-xl border border-[#EFECE6] bg-[#FAF8F5] px-3 py-2 text-xs font-medium text-[#231915] focus:border-[#231915] focus:outline-none"
-                    >
-                      <option value="default">기본순</option>
-                      <option value="caffeine-desc">카페인 높은순</option>
-                      <option value="calories-asc">칼로리 낮은순</option>
-                      <option value="sugar-asc">당류 낮은순</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Active Filter Indicators & Count */}
+            {/* Results Count & Filter Indicators */}
             <div className="flex items-center justify-between text-xs text-[#78716C] px-1">
               <div>
                 <span>검색 결과: </span>
@@ -246,17 +157,6 @@ export default function App() {
                   </span>
                 )}
               </div>
-
-              {(selectedCuration !== 'all' || selectedCategory !== 'all' || selectedBrand !== 'all' || searchQuery || sortBy !== 'default') && (
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  className="flex cursor-pointer items-center gap-1 text-[#78716C] hover:text-[#231915] underline underline-offset-2"
-                >
-                  <RotateCcw className="h-3 w-3" />
-                  필터 초기화
-                </button>
-              )}
             </div>
 
             {/* Drinks Bento Grid */}
@@ -290,14 +190,14 @@ export default function App() {
           </div>
         )}
 
-        {/* Tab 2: Bean Guide */}
+        {/* Tab 3: Bean Guide (1차/2차 이원화 필터) */}
         {activeTab === 'beans' && (
           <BeanGuideView
             onSelectBeanToDrinks={() => setActiveTab('drinks')}
           />
         )}
 
-        {/* Tab 3: Brand Compare */}
+        {/* Tab 4: Brand Compare */}
         {activeTab === 'brands' && (
           <BrandCompareView />
         )}
@@ -312,8 +212,8 @@ export default function App() {
         onAddDrink={handleAddDrink}
       />
 
-      {/* Today's Consumed Caffeine Tracker Drawer */}
-      <CaffeineTrackerDrawer
+      {/* Today's Consumed Caffeine Tracker Modal (Unified Center Modal & Bottom Sheet) */}
+      <CaffeineTrackerModal
         isOpen={isTrackerOpen}
         onClose={() => setIsTrackerOpen(false)}
         consumedList={consumedList}
