@@ -52,8 +52,8 @@ export default function HeroCuration({ selectedCuration, onSelectCuration }) {
       <div className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#FAF8F5] blur-2xl" />
 
       <div className="relative z-10 max-w-2xl">
-        <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-[11px] font-semibold tracking-wider text-[#78716C] uppercase">
-          Daily Curation Guide
+        <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-xs font-semibold tracking-wider text-[#78716C]">
+          맞춤 음료 큐레이션
         </span>
         <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-[#231915] sm:text-3xl sm:leading-snug">
           오늘 당신의 컨디션에는<br />
@@ -89,11 +89,11 @@ export default function HeroCuration({ selectedCuration, onSelectCuration }) {
               >
                 <Icon className="h-4 w-4 stroke-[1.8]" />
               </div>
-              <span className="mt-2.5 text-xs font-bold leading-tight">
+              <span className="mt-2.5 text-xs sm:text-sm font-bold leading-tight">
                 {preset.label}
               </span>
               <span
-                className={`mt-1 text-[11px] ${
+                className={`mt-1 text-xs ${
                   isSelected ? 'text-[#FAF8F5]/80' : 'text-[#78716C]'
                 }`}
               >

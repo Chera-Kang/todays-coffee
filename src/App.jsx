@@ -108,6 +108,14 @@ export default function App() {
     setSortBy('default');
   };
 
+  const handleNavigateToExplore = ({ curationId = 'all', categoryId = 'all' } = {}) => {
+    setSelectedCuration(curationId);
+    setSelectedCategory(categoryId);
+    setSelectedBrand('all');
+    setSearchQuery('');
+    setActiveTab('drinks');
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#231915]">
       {/* Global Navigation Header with 4 Tabs & Caffeine Tracker */}
@@ -120,10 +128,11 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Tab 1: 커피 추천 (Blank Placeholder + Action to Explore) */}
+        {/* Tab 1: 커피 추천 (Trend-based curation + TOP 6 + Fallback) */}
         {activeTab === 'recommendation' && (
           <RecommendationView
-            onGoToExplore={() => setActiveTab('drinks')}
+            onSelectDrink={setSelectedDrink}
+            onNavigateToExplore={handleNavigateToExplore}
           />
         )}
 

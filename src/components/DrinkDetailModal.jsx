@@ -18,7 +18,7 @@ export default function DrinkDetailModal({
   // Validation Rule:
   // - Max 30 chars
   // - Cannot be whitespace only (when not empty)
-  // - Disallow special characters like !@#$%^&*() etc.
+  // - Disallow special characters
   const validateMemo = (val) => {
     if (!val || val.length === 0) {
       setErrorMessage('');
@@ -35,7 +35,6 @@ export default function DrinkDetailModal({
       return false;
     }
 
-    // Disallowed special chars: !@#$%^&*() and symbols
     const specialCharsRegex = /[!@#$%^&*()+=\[\]{};':"\\|<>/?~`]/;
     if (specialCharsRegex.test(val)) {
       setErrorMessage('특수문자(!@#$%^&*() 등)는 입력하실 수 없습니다.');
@@ -53,7 +52,7 @@ export default function DrinkDetailModal({
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!validateMemo(memo)) {
       return;
     }
@@ -93,8 +92,8 @@ export default function DrinkDetailModal({
 
       {/* Modal / Bottom Sheet Box (dvh aware) */}
       <div className="relative z-10 flex max-h-[90dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-3xl border border-[#EFECE6] bg-[#FFFFFF] shadow-2xl sm:rounded-3xl">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#EFECE6] px-6 py-4">
+        {/* Sticky Header */}
+        <div className="flex items-center justify-between border-b border-[#EFECE6] px-6 py-4 bg-[#FFFFFF]">
           <div className="flex items-center gap-2">
             <span className="rounded-full bg-[#FAF8F5] px-2.5 py-0.5 text-xs font-semibold text-[#78716C]">
               {drink.brand}
@@ -110,20 +109,20 @@ export default function DrinkDetailModal({
           </button>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="overflow-y-auto px-6 py-5 space-y-5">
-          {/* Visual Thumbnail + Title & Description */}
+        {/* Scrollable Content (Scrollbar Hidden via scrollbar-hide) */}
+        <div className="flex-1 overflow-y-auto scrollbar-hide px-6 py-5 space-y-5">
+          {/* Visual Thumbnail + Title & Description (폰트 스케일업) */}
           <div className="flex items-start gap-4">
             <DrinkThumbnail drink={drink} size={72} className="shrink-0" />
             <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-bold tracking-tight text-[#231915] sm:text-2xl leading-tight">
+              <h2 className="text-2xl font-bold tracking-tight text-[#231915] sm:text-3xl leading-tight">
                 {drink.name}
               </h2>
-              <p className="mt-1.5 text-xs leading-relaxed text-[#78716C] sm:text-sm">
+              <p className="mt-1.5 text-sm leading-relaxed text-[#78716C]">
                 {drink.description}
               </p>
               {drink.boundaryTag && (
-                <span className="mt-2 inline-flex items-center rounded-md border border-[#EFECE6] bg-[#FAF8F5] px-2 py-0.5 text-[11px] font-semibold text-[#574E4A]">
+                <span className="mt-2 inline-flex items-center rounded-md border border-[#EFECE6] bg-[#FAF8F5] px-2.5 py-0.5 text-xs font-semibold text-[#574E4A]">
                   #{drink.boundaryTag}
                 </span>
               )}
@@ -138,51 +137,51 @@ export default function DrinkDetailModal({
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
               <div className="rounded-xl border border-[#EFECE6] bg-[#FFFFFF] p-2.5 text-center">
-                <span className="text-[11px] text-[#78716C]">칼로리</span>
-                <p className="mt-0.5 font-bold text-[#231915]">
+                <span className="text-xs text-[#78716C]">칼로리</span>
+                <p className="mt-0.5 text-sm font-semibold text-[#231915]">
                   {drink.calories} <span className="text-xs font-normal text-[#78716C]">kcal</span>
                 </p>
               </div>
               <div className="rounded-xl border border-[#EFECE6] bg-[#FFFFFF] p-2.5 text-center">
-                <span className="text-[11px] text-[#78716C]">카페인</span>
-                <p className={`mt-0.5 font-bold ${drink.caffeine >= 150 ? 'text-[#D97757]' : drink.caffeine <= 30 ? 'text-[#5B7A5E]' : 'text-[#231915]'}`}>
+                <span className="text-xs text-[#78716C]">카페인</span>
+                <p className={`mt-0.5 text-sm font-semibold ${drink.caffeine >= 150 ? 'text-[#D97757]' : drink.caffeine <= 30 ? 'text-[#5B7A5E]' : 'text-[#231915]'}`}>
                   {drink.caffeine} <span className="text-xs font-normal text-[#78716C]">mg</span>
                 </p>
               </div>
               <div className="rounded-xl border border-[#EFECE6] bg-[#FFFFFF] p-2.5 text-center">
-                <span className="text-[11px] text-[#78716C]">당류</span>
-                <p className={`mt-0.5 font-bold ${drink.sugar <= 5 ? 'text-[#5B7A5E]' : 'text-[#231915]'}`}>
+                <span className="text-xs text-[#78716C]">당류</span>
+                <p className={`mt-0.5 text-sm font-semibold ${drink.sugar <= 5 ? 'text-[#5B7A5E]' : 'text-[#231915]'}`}>
                   {drink.sugar} <span className="text-xs font-normal text-[#78716C]">g</span>
                 </p>
               </div>
               <div className="rounded-xl border border-[#EFECE6] bg-[#FFFFFF] p-2.5 text-center">
-                <span className="text-[11px] text-[#78716C]">단백질</span>
-                <p className="mt-0.5 font-bold text-[#231915]">
+                <span className="text-xs text-[#78716C]">단백질</span>
+                <p className="mt-0.5 text-sm font-semibold text-[#231915]">
                   {drink.protein} <span className="text-xs font-normal text-[#78716C]">g</span>
                 </p>
               </div>
             </div>
-            <p className="mt-2 text-[10px] text-[#78716C]">
+            <p className="mt-2 text-[11px] text-[#78716C]">
               * 성인 기준 일일 카페인 최대 권장량은 400mg, 당류 권장 섭취량은 50g입니다.
             </p>
           </div>
 
-          {/* Matched Bean Characteristics */}
+          {/* Matched Bean Characteristics (자연스러운 문구 교정) */}
           {bean && (
             <div className="rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] p-4">
-              <span className="text-[11px] font-semibold text-[#78716C] uppercase tracking-wider">
-                매칭 원두 프로필
+              <span className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">
+                원두 프로필 안내
               </span>
-              <h4 className="mt-1 text-sm font-bold tracking-tight text-[#231915]">
+              <h4 className="mt-1 text-base font-bold tracking-tight text-[#231915]">
                 {bean.name}
               </h4>
-              <p className="mt-1 text-xs text-[#78716C] leading-relaxed">
+              <p className="mt-1 text-sm text-[#78716C] leading-relaxed">
                 {bean.description}
               </p>
 
-              {/* Dots Rating */}
+              {/* Dots Rating (로스팅 정도 로 문구 교정) */}
               <div className="mt-3.5 space-y-2 rounded-xl bg-[#FAF8F5] p-3">
-                {renderDots(bean.roast, '로스팅 강도 (Roast)')}
+                {renderDots(bean.roast, '로스팅 정도 (Roast)')}
                 {renderDots(bean.acidity, '산미 (Acidity)')}
                 {renderDots(bean.body, '바디감 (Body)')}
               </div>
@@ -192,7 +191,7 @@ export default function DrinkDetailModal({
                 {bean.tags?.map((tag, idx) => (
                   <span
                     key={idx}
-                    className="rounded-full border border-[#EFECE6] bg-[#FAF8F5] px-2.5 py-0.5 text-[11px] text-[#78716C]"
+                    className="rounded-full border border-[#EFECE6] bg-[#FAF8F5] px-2.5 py-0.5 text-xs text-[#78716C]"
                   >
                     #{tag}
                   </span>
@@ -201,13 +200,13 @@ export default function DrinkDetailModal({
             </div>
           )}
 
-          {/* Today's Consumed Form & Tasting Memo */}
-          <form onSubmit={handleSubmit} className="rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] p-4">
+          {/* Today's Consumed Form & Tasting Memo Input Area */}
+          <div className="rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] p-4">
             <div className="flex items-center justify-between">
               <label htmlFor="tasting-memo" className="text-xs font-bold text-[#231915]">
-                오늘 마신 음료 담기 & 한 줄 테이스팅 메모
+                한 줄 테이스팅 메모
               </label>
-              <span className="text-[11px] text-[#78716C]">
+              <span className="text-xs text-[#78716C]">
                 {memo.length} / 30자
               </span>
             </div>
@@ -231,29 +230,36 @@ export default function DrinkDetailModal({
                 <span>{errorMessage}</span>
               </div>
             )}
+          </div>
+        </div>
 
-            <button
-              type="submit"
-              disabled={Boolean(errorMessage) || isSuccess}
-              className={`mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all ${
-                isSuccess
-                  ? 'bg-[#5B7A5E] text-white'
-                  : 'bg-[#231915] text-[#FAF8F5] hover:bg-[#3D2C24]'
-              }`}
-            >
-              {isSuccess ? (
-                <>
-                  <Check className="h-4 w-4 stroke-[2.5]" />
-                  담기 완료! 일일 트래커에 반영되었습니다
-                </>
-              ) : (
-                <>
-                  <PlusCircle className="h-4 w-4" />
-                  오늘 마신 음료에 담기 (+{drink.caffeine}mg)
-                </>
-              )}
-            </button>
-          </form>
+        {/* Sticky Fixed Bottom Footer Action Button & Fade Mask */}
+        <div className="relative sticky bottom-0 z-20 border-t border-[#EFECE6] bg-[#FFFFFF] px-6 py-4 shadow-xs">
+          {/* Subtle Top Gradient Fade Mask indicating more scrollable content above */}
+          <div className="pointer-events-none absolute -top-4 left-0 right-0 h-4 bg-gradient-to-t from-black/5 to-transparent" />
+
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={Boolean(errorMessage) || isSuccess}
+            className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all ${
+              isSuccess
+                ? 'bg-[#5B7A5E] text-white shadow-sm'
+                : 'bg-[#231915] text-[#FAF8F5] hover:bg-[#3D2C24] shadow-xs'
+            }`}
+          >
+            {isSuccess ? (
+              <>
+                <Check className="h-4 w-4 stroke-[2.5]" />
+                담기 완료! 일일 트래커에 반영되었습니다
+              </>
+            ) : (
+              <>
+                <PlusCircle className="h-4 w-4" />
+                오늘 마신 커피에 담기 (+{drink.caffeine}mg)
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>

@@ -107,23 +107,23 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
       {/* Intro Header & 1차 / 2차 Filter Hub */}
       <div className="rounded-3xl border border-[#EFECE6] bg-[#FFFFFF] p-6 shadow-xs sm:p-8 space-y-5">
         <div>
-          <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-[11px] font-semibold tracking-wider text-[#78716C] uppercase">
-            Specialty Bean Guide
+          <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-xs font-semibold tracking-wider text-[#78716C]">
+            원두 프로필 안내
           </span>
-          <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-[#231915]">
+          <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#231915]">
             원두 프로필 & 테이스팅 가이드
           </h2>
-          <p className="mt-1 text-sm text-[#78716C]">
+          <p className="mt-1 text-sm text-[#78716C] leading-relaxed">
             나의 취향에 맞는 원두를 쉽고 직관적으로 찾아보세요. 산미 없는 고소함부터 매니아를 위한 세부 스펙까지 제공합니다.
           </p>
         </div>
 
         {/* 1차 필터: 대중적인 직관적 취향 선택 (알약형 버튼) */}
         <div>
-          <span className="text-xs font-bold text-[#231915]">
+          <span className="text-xs sm:text-sm font-bold text-[#231915]">
             1단계: 내가 좋아하는 커피 맛 선택
           </span>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-2.5 flex flex-wrap gap-2">
             {TASTE_PRESETS.map((preset) => {
               const isSelected = selectedTaste === preset.id;
               return (
@@ -131,7 +131,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
                   key={preset.id}
                   type="button"
                   onClick={() => setSelectedTaste(preset.id)}
-                  className={`cursor-pointer rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+                  className={`cursor-pointer rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all ${
                     isSelected
                       ? 'bg-[#231915] text-[#FAF8F5] shadow-sm ring-1 ring-[#231915]'
                       : 'border border-[#EFECE6] bg-[#FAF8F5] text-[#78716C] hover:text-[#231915] hover:bg-[#FFFFFF]'
@@ -149,13 +149,13 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
           <button
             type="button"
             onClick={() => setIsDetailOpen((prev) => !prev)}
-            className="flex cursor-pointer items-center justify-between w-full text-left text-xs font-bold text-[#231915] hover:text-[#D97757] transition-colors"
+            className="flex cursor-pointer items-center justify-between w-full text-left text-xs sm:text-sm font-bold text-[#231915] hover:text-[#D97757] transition-colors"
           >
             <div className="flex items-center gap-1.5">
-              <SlidersHorizontal className="h-3.5 w-3.5" />
+              <SlidersHorizontal className="h-4 w-4" />
               <span>상세 스펙으로 찾기 (바디감 · 로스팅 단계 · 세부 향미)</span>
               {isDetailFilterActive && (
-                <span className="rounded-full bg-[#D97757] px-2 py-0.2 text-[10px] font-bold text-white">
+                <span className="rounded-full bg-[#D97757] px-2 py-0.5 text-[10px] font-bold text-white">
                   적용 중
                 </span>
               )}
@@ -172,8 +172,8 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
             <div className="mt-4 rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] p-4.5 space-y-4">
               {/* 바디감 선택 */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <span className="text-[11px] font-bold text-[#78716C] w-20 shrink-0">
-                  바디감 강도:
+                <span className="text-xs font-bold text-[#78716C] w-20 shrink-0">
+                  바디감:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {[
@@ -186,7 +186,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
                       key={item.id}
                       type="button"
                       onClick={() => setSelectedBody(item.id)}
-                      className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
+                      className={`cursor-pointer rounded-lg px-3 py-1 text-xs sm:text-sm font-medium transition-all ${
                         selectedBody === item.id
                           ? 'bg-[#231915] text-[#FAF8F5] font-semibold'
                           : 'border border-[#EFECE6] bg-[#FFFFFF] text-[#78716C] hover:text-[#231915]'
@@ -198,10 +198,10 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
                 </div>
               </div>
 
-              {/* 로스팅 단계 선택 */}
+              {/* 로스팅 단계 선택 (로스팅 정도 로 문구 교정) */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <span className="text-[11px] font-bold text-[#78716C] w-20 shrink-0">
-                  로스팅 강도:
+                <span className="text-xs font-bold text-[#78716C] w-20 shrink-0">
+                  로스팅 정도:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {[
@@ -213,7 +213,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
                       key={item.id}
                       type="button"
                       onClick={() => setSelectedRoast(item.id)}
-                      className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
+                      className={`cursor-pointer rounded-lg px-3 py-1 text-xs sm:text-sm font-medium transition-all ${
                         selectedRoast === item.id
                           ? 'bg-[#231915] text-[#FAF8F5] font-semibold'
                           : 'border border-[#EFECE6] bg-[#FFFFFF] text-[#78716C] hover:text-[#231915]'
@@ -227,14 +227,14 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
 
               {/* 세부 테이스팅 노트 태그 */}
               <div className="flex flex-col sm:flex-row sm:items-start gap-2">
-                <span className="text-[11px] font-bold text-[#78716C] w-20 shrink-0 mt-1">
-                  세부 향미 태그:
+                <span className="text-xs font-bold text-[#78716C] w-20 shrink-0 mt-1">
+                  세부 향미:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     type="button"
                     onClick={() => setSelectedTag('all')}
-                    className={`cursor-pointer rounded-md px-2 py-0.5 text-[11px] font-medium transition-all ${
+                    className={`cursor-pointer rounded-md px-2.5 py-1 text-xs font-medium transition-all ${
                       selectedTag === 'all'
                         ? 'bg-[#231915] text-[#FAF8F5]'
                         : 'border border-[#EFECE6] bg-[#FFFFFF] text-[#78716C] hover:text-[#231915]'
@@ -247,7 +247,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
                       key={tag}
                       type="button"
                       onClick={() => setSelectedTag(tag)}
-                      className={`cursor-pointer rounded-md px-2 py-0.5 text-[11px] font-medium transition-all ${
+                      className={`cursor-pointer rounded-md px-2.5 py-1 text-xs font-medium transition-all ${
                         selectedTag === tag
                           ? 'bg-[#231915] text-[#FAF8F5]'
                           : 'border border-[#EFECE6] bg-[#FFFFFF] text-[#78716C] hover:text-[#231915]'
@@ -263,7 +263,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
         </div>
 
         {/* Filter Count & Reset */}
-        <div className="flex items-center justify-between text-xs text-[#78716C] pt-1">
+        <div className="flex items-center justify-between text-xs sm:text-sm text-[#78716C] pt-1">
           <div>
             <span>매칭된 원두: </span>
             <strong className="text-[#231915]">{filteredBeans.length}</strong>종
@@ -291,26 +291,26 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-[#FAF8F5] px-2.5 py-0.5 text-[11px] font-semibold text-[#78716C]">
+                  <span className="rounded-full bg-[#FAF8F5] px-2.5 py-0.5 text-xs font-semibold text-[#78716C]">
                     {bean.brand}
                   </span>
-                  <span className="text-[11px] text-[#78716C]">
+                  <span className="text-xs text-[#78716C]">
                     Roast Lv.{bean.roast}
                   </span>
                 </div>
 
-                <h3 className="mt-2.5 text-lg font-bold tracking-tight text-[#231915]">
+                <h3 className="mt-2.5 text-lg sm:text-xl font-bold tracking-tight text-[#231915]">
                   {bean.name}
                 </h3>
-                <p className="mt-1 text-xs text-[#78716C] leading-relaxed">
+                <p className="mt-1 text-sm text-[#78716C] leading-relaxed">
                   {bean.description}
                 </p>
               </div>
 
               <div className="mt-5 space-y-3 border-t border-[#EFECE6] pt-4">
-                {/* Dot meters */}
+                {/* Dot meters (로스팅 정도 로 문구 교정) */}
                 <div className="space-y-2 rounded-xl bg-[#FAF8F5] p-3">
-                  {renderDots(bean.roast, '로스팅 강도 (Roast)', 'bg-[#3D2C24]')}
+                  {renderDots(bean.roast, '로스팅 정도 (Roast)', 'bg-[#3D2C24]')}
                   {renderDots(bean.acidity, '산미 (Acidity)', 'bg-[#5B7A5E]')}
                   {renderDots(bean.body, '바디감 (Body)', 'bg-[#231915]')}
                 </div>
@@ -320,7 +320,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
                   {bean.tags?.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-md bg-[#FAF8F5] border border-[#EFECE6] px-2 py-0.5 text-[10px] font-medium text-[#78716C]"
+                      className="rounded-md bg-[#FAF8F5] border border-[#EFECE6] px-2 py-0.5 text-xs font-medium text-[#78716C]"
                     >
                       #{tag}
                     </span>

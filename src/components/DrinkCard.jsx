@@ -45,7 +45,7 @@ const BRAND_STYLES = {
   }
 };
 
-export default function DrinkCard({ drink, onSelectDrink }) {
+export default function DrinkCard({ drink, onSelectDrink, topSlot }) {
   const brandStyle = BRAND_STYLES[drink.brandId] || {
     badgeBg: 'bg-[#EFECE6]',
     badgeText: 'text-[#231915]',
@@ -70,19 +70,22 @@ export default function DrinkCard({ drink, onSelectDrink }) {
       className="group relative flex cursor-pointer flex-col justify-between rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#78716C]/40 hover:shadow-md"
     >
       <div>
+        {/* Optional Top Slot (e.g. Curation Comment) */}
+        {topSlot}
+
         {/* Top Header: Brand & Volume & Arrow */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5">
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${brandStyle.badgeBg} ${brandStyle.badgeText}`}
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${brandStyle.badgeBg} ${brandStyle.badgeText}`}
             >
               <span className={`h-1.5 w-1.5 rounded-full ${brandStyle.dot}`} />
               {drink.brand}
             </span>
-            <span className="text-[11px] text-[#78716C]">
+            <span className="text-xs text-[#78716C]">
               {drink.volume}ml
             </span>
-            <span className="text-[10px] text-[#78716C]/70">
+            <span className="text-xs text-[#78716C]/70">
               · {drink.category}
             </span>
           </div>
@@ -92,23 +95,22 @@ export default function DrinkCard({ drink, onSelectDrink }) {
           </div>
         </div>
 
-        {/* Thumbnail + Title & Description Layout */}
+        {/* Thumbnail + Title & Description Layout (폰트 상향) */}
         <div className="mt-3.5 flex items-start gap-3.5">
-          {/* 64x64px SVG Drink Thumbnail */}
           <DrinkThumbnail drink={drink} size={64} className="shrink-0" />
 
           <div className="flex-1 min-w-0">
-            <h3 className="text-base font-bold tracking-tight text-[#231915] group-hover:text-[#D97757] transition-colors leading-snug">
+            <h3 className="text-lg font-bold tracking-tight text-[#231915] group-hover:text-[#D97757] transition-colors leading-snug">
               {drink.name}
             </h3>
-            <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[#78716C]">
+            <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-[#78716C]">
               {drink.description}
             </p>
 
             {/* Refined Natural Curation Tag */}
             {drink.boundaryTag && (
               <div className="mt-2">
-                <span className="inline-flex items-center rounded-md border border-[#EFECE6] bg-[#FAF8F5] px-2 py-0.5 text-[10px] font-semibold text-[#574E4A]">
+                <span className="inline-flex items-center rounded-md border border-[#EFECE6] bg-[#FAF8F5] px-2 py-0.5 text-xs font-semibold text-[#574E4A]">
                   #{drink.boundaryTag}
                 </span>
               </div>
@@ -117,27 +119,27 @@ export default function DrinkCard({ drink, onSelectDrink }) {
         </div>
       </div>
 
-      {/* Progress Bars & Nutritional Badges */}
+      {/* Progress Bars & Nutritional Badges (수치 폰트 상향) */}
       <div className="mt-4 space-y-2.5 border-t border-[#EFECE6]/70 pt-3">
         {/* Caffeine Progress Bar */}
         <div>
-          <div className="flex items-center justify-between text-[11px]">
+          <div className="flex items-center justify-between text-xs">
             <span className="font-medium text-[#78716C]">
               카페인
               {isHighCaffeine && (
-                <span className="ml-1 text-[10px] font-semibold text-[#D97757]">
+                <span className="ml-1 text-[11px] font-semibold text-[#D97757]">
                   (고함량)
                 </span>
               )}
               {isDecaf && (
-                <span className="ml-1 text-[10px] font-semibold text-[#5B7A5E]">
+                <span className="ml-1 text-[11px] font-semibold text-[#5B7A5E]">
                   (디카페인)
                 </span>
               )}
             </span>
-            <span className="font-bold text-[#231915]">
+            <span className="text-sm font-semibold text-[#231915]">
               {drink.caffeine}
-              <span className="text-[10px] font-normal text-[#78716C]"> mg</span>
+              <span className="text-xs font-normal text-[#78716C]"> mg</span>
             </span>
           </div>
           <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-[#EFECE6]">
@@ -156,18 +158,18 @@ export default function DrinkCard({ drink, onSelectDrink }) {
 
         {/* Sugar Progress Bar */}
         <div>
-          <div className="flex items-center justify-between text-[11px]">
+          <div className="flex items-center justify-between text-xs">
             <span className="font-medium text-[#78716C]">
               당류
               {isLowSugar && (
-                <span className="ml-1 text-[10px] font-semibold text-[#5B7A5E]">
+                <span className="ml-1 text-[11px] font-semibold text-[#5B7A5E]">
                   (저당)
                 </span>
               )}
             </span>
-            <span className="font-bold text-[#231915]">
+            <span className="text-sm font-semibold text-[#231915]">
               {drink.sugar}
-              <span className="text-[10px] font-normal text-[#78716C]"> g</span>
+              <span className="text-xs font-normal text-[#78716C]"> g</span>
             </span>
           </div>
           <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-[#EFECE6]">
@@ -181,12 +183,12 @@ export default function DrinkCard({ drink, onSelectDrink }) {
         </div>
 
         {/* Calorie & Protein Badges */}
-        <div className="flex items-center justify-between pt-0.5 text-[11px] text-[#78716C]">
+        <div className="flex items-center justify-between pt-0.5 text-xs text-[#78716C]">
           <span className="rounded-md bg-[#FAF8F5] px-2 py-0.5 font-medium">
-            칼로리 <strong className="text-[#231915]">{drink.calories}</strong> kcal
+            칼로리 <strong className="text-sm font-semibold text-[#231915]">{drink.calories}</strong> kcal
           </span>
           <span className="rounded-md bg-[#FAF8F5] px-2 py-0.5 font-medium">
-            단백질 <strong className="text-[#231915]">{drink.protein}</strong> g
+            단백질 <strong className="text-sm font-semibold text-[#231915]">{drink.protein}</strong> g
           </span>
         </div>
       </div>
