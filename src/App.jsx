@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Header from './components/Header';
 import RecommendationView from './components/RecommendationView';
-import UnifiedFilterPanel, { QUICK_CURATION_PRESETS } from './components/UnifiedFilterPanel';
-import DrinkCard from './components/DrinkCard';
-import DrinkDetailModal from './components/DrinkDetailModal';
-import CaffeineTrackerModal from './components/CaffeineTrackerModal';
+import DrinksExploreView from './components/DrinksExploreView';
 import BeanGuideView from './components/BeanGuideView';
 import BrandCompareView from './components/BrandCompareView';
+import NotFoundView from './components/NotFoundView';
+import DrinkDetailModal from './components/DrinkDetailModal';
+import CaffeineTrackerModal from './components/CaffeineTrackerModal';
+import ScrollToTopButton from './components/ScrollToTopButton';
 
 import menusData from './data/menus.json';
 import beansData from './data/beans.json';
@@ -15,19 +16,15 @@ import {
   getConsumedCoffees,
   addConsumedCoffee,
   removeConsumedCoffee,
-  clearConsumedCoffees
+  clearConsumedCoffees,
+  checkAndResetMidnight
 } from './utils/storage';
 
 export default function App() {
-  // 1. Initial default active tab is 'recommendation'
+  // 1. Navigation & Route States
   const [activeTab, setActiveTab] = useState('recommendation'); // 'recommendation' | 'drinks' | 'beans' | 'brands'
-
-  // Filter States for 'drinks' tab
-  const [selectedCuration, setSelectedCuration] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedBrand, setSelectedBrand] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('default'); // 'default' | 'caffeine-desc' | 'calories-asc' | 'sugar-asc'
+  const [isNotFound, setIsNotFound] = useState(false);
+  const [exploreFilter, setExploreFilter] = useState(null);
 
   // Modals & Drawers state
   const [selectedDrink, setSelectedDrink] = useState(null);
@@ -36,9 +33,140 @@ export default function App() {
   // Consumed Coffees State (LocalStorage)
   const [consumedList, setConsumedList] = useState([]);
 
+  // 0. 마운트 시 로컬스토리지 로드 및 자정 자동 리셋 감지
   useEffect(() => {
     setConsumedList(getConsumedCoffees());
+
+    const handleMidnightCheck = () => {
+      const resetResult = checkAndResetMidnight();
+      if (resetResult !== null) {
+        setConsumedList(resetResult);
+      }
+    };
+
+    window.addEventListener('focus', handleMidnightCheck);
+    document.addEventListener('visibilitychange', handleMidnightCheck);
+    const intervalTimer = setInterval(handleMidnightCheck, 60000); // 1분 간격 자정 검사
+
+    return () => {
+      window.removeEventListener('focus', handleMidnightCheck);
+      document.removeEventListener('visibilitychange', handleMidnightCheck);
+      clearInterval(intervalTimer);
+    };
   }, []);
+
+  // 1. HTML5 History API & 해시 라우팅: 안드로이드 뒤로가기 모달 제어, 메뉴별 Page화 및 404 URL 오류 검증
+  useEffect(() => {
+    const handleHashSync = () => {
+      const rawHash = window.location.hash;
+      const hash = rawHash || '#tab=recommendation';
+
+      let isValid = false;
+
+      // 1-1. 탭(Page) 검증
+      if (hash.startsWith('#tab=')) {
+        const tabName = hash.replace('#tab=', '');
+        if (['recommendation', 'drinks', 'beans', 'brands'].includes(tabName)) {
+          isValid = true;
+          setActiveTab(tabName);
+          setSelectedDrink(null);
+          setIsTrackerOpen(false);
+        }
+      } else if (hash === '#tracker') {
+        isValid = true;
+        setIsTrackerOpen(true);
+        setSelectedDrink(null);
+      } else if (hash.startsWith('#drink-')) {
+        const drinkId = hash.replace('#drink-', '');
+        const targetDrink = menusData.find((m) => m.id === drinkId);
+        if (targetDrink) {
+          isValid = true;
+          setSelectedDrink(targetDrink);
+          setIsTrackerOpen(false);
+        }
+      }
+
+      if (!isValid) {
+        // 알 수 없거나 존재하지 않는 해시/음료 ID인 경우 404 Blank 페이지 렌더링
+        setIsNotFound(true);
+        setSelectedDrink(null);
+        setIsTrackerOpen(false);
+        return;
+      }
+
+      setIsNotFound(false);
+    };
+
+    // 초기 진입 시 기본 해시 설정 및 동기화
+    if (!window.location.hash) {
+      window.history.replaceState(null, '', '#tab=recommendation');
+    }
+    handleHashSync();
+
+    window.addEventListener('popstate', handleHashSync);
+    return () => window.removeEventListener('popstate', handleHashSync);
+  }, []);
+
+  // 2. 탭 변경 시 스크롤 위치 즉시 최상단 초기화
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [activeTab]);
+
+  // 3. 모달 활성화 시 전체 페이지 스크롤 방지 (iOS Safari 바디락 보강)
+  useEffect(() => {
+    if (Boolean(selectedDrink) || isTrackerOpen) {
+      const originalOverflow = document.body.style.overflow;
+      const originalTouchAction = document.body.style.touchAction;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.touchAction = originalTouchAction;
+        document.documentElement.style.overflow = '';
+      };
+    }
+  }, [selectedDrink, isTrackerOpen]);
+
+  // 모달 오픈/닫기 히스토리 헬퍼
+  const handleOpenDrinkModal = (drink) => {
+    if (selectedDrink) {
+      // 이미 모달이 열려 있는 상태에서 타 브랜드 메뉴를 선택한 경우:
+      // 모달이 층층이 쌓이지 않도록 replaceState로 현재 엔트리만 교체!
+      setSelectedDrink(drink);
+      window.history.replaceState({ modal: 'drink', id: drink.id }, '', `#drink-${drink.id}`);
+      return;
+    }
+    // 새로 모달을 여는 경우: 히스토리에 push
+    setSelectedDrink(drink);
+    window.history.pushState({ modal: 'drink', id: drink.id }, '', `#drink-${drink.id}`);
+  };
+
+  const handleCloseDrinkModal = () => {
+    setSelectedDrink(null);
+    if (window.location.hash.startsWith('#drink-')) {
+      window.history.back();
+    }
+  };
+
+  const handleOpenTracker = () => {
+    setIsTrackerOpen(true);
+    window.history.pushState({ modal: 'tracker' }, '', '#tracker');
+  };
+
+  const handleCloseTracker = () => {
+    setIsTrackerOpen(false);
+    if (window.location.hash === '#tracker') {
+      window.history.back();
+    }
+  };
+
+  // 탭(Page) 변경 시 pushState로 히스토리 적재 -> 뒤로가기 시 이전 탭으로 이동 가능
+  const handleTabChange = (tab) => {
+    if (activeTab === tab && window.location.hash === `#tab=${tab}`) return;
+    setActiveTab(tab);
+    window.history.pushState(null, '', `#tab=${tab}`);
+  };
 
   const handleAddDrink = (drink, memo) => {
     const updated = addConsumedCoffee(drink, memo);
@@ -61,59 +189,18 @@ export default function App() {
     return beansData.find((b) => b.id === selectedDrink.beanId) || null;
   }, [selectedDrink]);
 
-  // Filtered & Sorted Drinks (Intersection Filter)
-  const filteredDrinks = useMemo(() => {
-    const curationObj = QUICK_CURATION_PRESETS.find((c) => c.id === selectedCuration);
-    const curationFilter = curationObj ? curationObj.filter : () => true;
-
-    return menusData
-      .filter((drink) => {
-        // 1. Quick Curation condition filter
-        if (!curationFilter(drink)) return false;
-
-        // 2. Category filter
-        if (selectedCategory !== 'all' && drink.category !== selectedCategory) return false;
-
-        // 3. Brand filter
-        if (selectedBrand !== 'all' && drink.brandId !== selectedBrand) return false;
-
-        // 4. Search keyword filter
-        if (searchQuery.trim()) {
-          const q = searchQuery.toLowerCase().trim();
-          const matchName = drink.name.toLowerCase().includes(q);
-          const matchBrand = drink.brand.toLowerCase().includes(q);
-          const matchDesc = drink.description.toLowerCase().includes(q);
-          const matchCategory = drink.category.toLowerCase().includes(q);
-          const matchTag = drink.boundaryTag ? drink.boundaryTag.toLowerCase().includes(q) : false;
-          if (!matchName && !matchBrand && !matchDesc && !matchCategory && !matchTag) {
-            return false;
-          }
-        }
-
-        return true;
-      })
-      .sort((a, b) => {
-        if (sortBy === 'caffeine-desc') return b.caffeine - a.caffeine;
-        if (sortBy === 'calories-asc') return a.calories - b.calories;
-        if (sortBy === 'sugar-asc') return a.sugar - b.sugar;
-        return 0;
-      });
-  }, [selectedCuration, selectedCategory, selectedBrand, searchQuery, sortBy]);
-
-  const handleResetFilters = () => {
-    setSelectedCuration('all');
-    setSelectedCategory('all');
-    setSelectedBrand('all');
-    setSearchQuery('');
-    setSortBy('default');
+  const handleNavigateToExplore = ({ curationId = 'all', categoryId = 'all' } = {}) => {
+    setExploreFilter({ curationId, categoryId, ts: Date.now() });
+    setActiveTab('drinks');
+    window.history.pushState(null, '', '#tab=drinks');
   };
 
-  const handleNavigateToExplore = ({ curationId = 'all', categoryId = 'all' } = {}) => {
-    setSelectedCuration(curationId);
-    setSelectedCategory(categoryId);
-    setSelectedBrand('all');
-    setSearchQuery('');
-    setActiveTab('drinks');
+  const handleNavigateHome = () => {
+    setIsNotFound(false);
+    setSelectedDrink(null);
+    setIsTrackerOpen(false);
+    setActiveTab('recommendation');
+    window.history.replaceState(null, '', '#tab=recommendation');
   };
 
   return (
@@ -121,82 +208,32 @@ export default function App() {
       {/* Global Navigation Header with 4 Tabs & Caffeine Tracker */}
       <Header
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         consumedList={consumedList}
-        onOpenTracker={() => setIsTrackerOpen(true)}
+        onOpenTracker={handleOpenTracker}
       />
 
       {/* Main Content Area */}
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Tab 1: 커피 추천 (Trend-based curation + TOP 6 + Fallback) */}
-        {activeTab === 'recommendation' && (
-          <RecommendationView
-            onSelectDrink={setSelectedDrink}
-            onNavigateToExplore={handleNavigateToExplore}
-          />
-        )}
-
-        {/* Tab 2: 음료 탐색 (Unified Filter Panel + Drinks Bento Grid) */}
-        {activeTab === 'drinks' && (
-          <div className="space-y-6">
-            {/* Unified 2-Tier Filter Panel */}
-            <UnifiedFilterPanel
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-              selectedCuration={selectedCuration}
-              setSelectedCuration={setSelectedCuration}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              selectedBrand={selectedBrand}
-              setSelectedBrand={setSelectedBrand}
-              onResetFilters={handleResetFilters}
-              resultCount={filteredDrinks.length}
-            />
-
-            {/* Results Count & Filter Indicators */}
-            <div className="flex items-center justify-between text-xs text-[#78716C] px-1">
-              <div>
-                <span>검색 결과: </span>
-                <strong className="text-[#231915]">{filteredDrinks.length}</strong>개 음료
-                {(selectedCuration !== 'all' || selectedCategory !== 'all' || selectedBrand !== 'all' || searchQuery) && (
-                  <span className="ml-2 text-[#78716C]">
-                    (필터 적용 중)
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Drinks Bento Grid */}
-            {filteredDrinks.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredDrinks.map((drink) => (
-                  <DrinkCard
-                    key={drink.id}
-                    drink={drink}
-                    onSelectDrink={setSelectedDrink}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#EFECE6] bg-[#FFFFFF] py-16 text-center">
-                <p className="text-base font-bold tracking-tight text-[#231915]">
-                  조건에 일치하는 음료가 없습니다.
-                </p>
-                <p className="mt-1 text-xs text-[#78716C]">
-                  다른 카테고리나 브랜드 칩을 선택하시거나 검색어를 확인해 보세요.
-                </p>
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  className="mt-4 rounded-xl bg-[#231915] px-4 py-2 text-xs font-semibold text-[#FAF8F5] transition-opacity hover:opacity-90"
-                >
-                  필터 초기화
-                </button>
-              </div>
+        {/* URL 오류 시 노출되는 Blank 404 페이지 */}
+        {isNotFound ? (
+          <NotFoundView onNavigateHome={handleNavigateHome} />
+        ) : (
+          <>
+            {/* Tab 1: 추천 커피 */}
+            {activeTab === 'recommendation' && (
+              <RecommendationView
+                onSelectDrink={handleOpenDrinkModal}
+                onNavigateToExplore={handleNavigateToExplore}
+              />
             )}
-          </div>
+
+        {/* Tab 2: 음료 탐색 (2-Tier 필터 & 벤토 그리드 - 독립 컴포넌트) */}
+        {activeTab === 'drinks' && (
+          <DrinksExploreView
+            onSelectDrink={handleOpenDrinkModal}
+            initialFilter={exploreFilter}
+          />
         )}
 
         {/* Tab 3: Bean Guide (1차/2차 이원화 필터) */}
@@ -210,21 +247,24 @@ export default function App() {
         {activeTab === 'brands' && (
           <BrandCompareView />
         )}
+          </>
+        )}
       </main>
 
-      {/* Drink Detail Modal (Bottom Sheet on Mobile, Centered on PC) */}
+      {/* Drink Detail Modal */}
       <DrinkDetailModal
         drink={selectedDrink}
         bean={matchedBean}
         isOpen={Boolean(selectedDrink)}
-        onClose={() => setSelectedDrink(null)}
+        onClose={handleCloseDrinkModal}
         onAddDrink={handleAddDrink}
+        onSelectDrink={handleOpenDrinkModal}
       />
 
-      {/* Today's Consumed Caffeine Tracker Modal (Unified Center Modal & Bottom Sheet) */}
+      {/* Today's Consumed Caffeine Tracker Modal */}
       <CaffeineTrackerModal
         isOpen={isTrackerOpen}
-        onClose={() => setIsTrackerOpen(false)}
+        onClose={handleCloseTracker}
         consumedList={consumedList}
         onRemoveItem={handleRemoveDrink}
         onClearAll={handleClearAllDrinks}
@@ -235,13 +275,16 @@ export default function App() {
         <div className="mx-auto max-w-6xl px-4 space-y-1">
           <p className="font-bold tracking-tight text-[#231915]">오늘의커피 (Today's Coffee)</p>
           <p>
-            스타벅스 · 메가커피 · 컴포즈커피 · 폴바셋 · 투썸플레이스 · 이디야커피 · 빽다방 · 할리스 8대 브랜드 공식 영양정보 기준 분석 데이터 제공
+            8대 브랜드 공식 영양정보 기준 분석 데이터 제공
           </p>
           <p className="text-[11px] text-[#78716C]/70">
             성인 일일 최대 카페인 권장량: 400mg | 당류 권장 섭취량: 50g 이하
           </p>
         </div>
       </footer>
+
+      {/* Upward Scroll-Detecting FAB (최상단 이동) */}
+      <ScrollToTopButton />
     </div>
   );
 }

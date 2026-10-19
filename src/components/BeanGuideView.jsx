@@ -2,6 +2,17 @@ import React, { useState, useMemo } from 'react';
 import { Tag, SlidersHorizontal, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import beansData from '../data/beans.json';
 
+const BRAND_STYLES = {
+  starbucks: { badgeBg: 'bg-[#EBF5F0]', badgeText: 'text-[#00704A]', dot: 'bg-[#00704A]' },
+  megacoffee: { badgeBg: 'bg-[#FEF9E6]', badgeText: 'text-[#8A6D00]', dot: 'bg-[#D4A017]' },
+  compose: { badgeBg: 'bg-[#FFF7EB]', badgeText: 'text-[#A05E00]', dot: 'bg-[#E69C24]' },
+  paulbassett: { badgeBg: 'bg-[#FAEAEC]', badgeText: 'text-[#A6192E]', dot: 'bg-[#A6192E]' },
+  twosome: { badgeBg: 'bg-[#FDF0F0]', badgeText: 'text-[#D62734]', dot: 'bg-[#D62734]' },
+  ediya: { badgeBg: 'bg-[#EDF2FA]', badgeText: 'text-[#1B3B8A]', dot: 'bg-[#1B3B8A]' },
+  paik: { badgeBg: 'bg-[#FEFCE8]', badgeText: 'text-[#926004]', dot: 'bg-[#F5B800]' },
+  hollys: { badgeBg: 'bg-[#FDF2F3]', badgeText: 'text-[#BA1828]', dot: 'bg-[#BA1828]' }
+};
+
 // 1차 직관적 취향 프리셋
 const TASTE_PRESETS = [
   {
@@ -108,7 +119,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
       <div className="rounded-3xl border border-[#EFECE6] bg-[#FFFFFF] p-6 shadow-xs sm:p-8 space-y-5">
         <div>
           <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-xs font-semibold tracking-wider text-[#78716C]">
-            원두 프로필 안내
+            원두 가이드
           </span>
           <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#231915]">
             원두 프로필 & 테이스팅 가이드
@@ -121,7 +132,7 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
         {/* 1차 필터: 대중적인 직관적 취향 선택 (알약형 버튼) */}
         <div>
           <span className="text-xs sm:text-sm font-bold text-[#231915]">
-            1단계: 내가 좋아하는 커피 맛 선택
+            내가 좋아하는 커피 맛 선택
           </span>
           <div className="mt-2.5 flex flex-wrap gap-2">
             {TASTE_PRESETS.map((preset) => {
@@ -151,19 +162,22 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
             onClick={() => setIsDetailOpen((prev) => !prev)}
             className="flex cursor-pointer items-center justify-between w-full text-left text-xs sm:text-sm font-bold text-[#231915] hover:text-[#D97757] transition-colors"
           >
-            <div className="flex items-center gap-1.5">
-              <SlidersHorizontal className="h-4 w-4" />
-              <span>상세 스펙으로 찾기 (바디감 · 로스팅 단계 · 세부 향미)</span>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <SlidersHorizontal className="h-4 w-4 shrink-0" />
+              <span className="truncate break-keep">
+                <span className="sm:hidden">상세 스펙 필터 (바디감·로스팅·향미)</span>
+                <span className="hidden sm:inline">상세 스펙으로 찾기 (바디감 · 로스팅 단계 · 세부 향미)</span>
+              </span>
               {isDetailFilterActive && (
-                <span className="rounded-full bg-[#D97757] px-2 py-0.5 text-[10px] font-bold text-white">
+                <span className="rounded-full bg-[#D97757] px-2 py-0.5 text-[10px] font-bold text-white shrink-0">
                   적용 중
                 </span>
               )}
             </div>
             {isDetailOpen ? (
-              <ChevronUp className="h-4 w-4 text-[#78716C]" />
+              <ChevronUp className="h-4 w-4 shrink-0 text-[#78716C]" />
             ) : (
-              <ChevronDown className="h-4 w-4 text-[#78716C]" />
+              <ChevronDown className="h-4 w-4 shrink-0 text-[#78716C]" />
             )}
           </button>
 
@@ -261,59 +275,76 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Filter Count & Reset */}
-        <div className="flex items-center justify-between text-xs sm:text-sm text-[#78716C] pt-1">
-          <div>
-            <span>매칭된 원두: </span>
-            <strong className="text-[#231915]">{filteredBeans.length}</strong>종
-          </div>
+      {/* Results Count & Filter Indicators (음료 탐색과 동일한 위치 & 룩앤필) */}
+      <div className="flex items-center justify-between text-xs text-[#78716C] px-1">
+        <div>
+          <span>매칭된 원두: </span>
+          <strong className="text-[#231915]">{filteredBeans.length}</strong>종
           {(selectedTaste !== 'all' || isDetailFilterActive) && (
-            <button
-              type="button"
-              onClick={handleResetFilters}
-              className="flex cursor-pointer items-center gap-1 text-[#78716C] hover:text-[#231915] underline underline-offset-2"
-            >
-              <RotateCcw className="h-3 w-3" />
-              필터 초기화
-            </button>
+            <span className="ml-2 text-[#78716C]">
+              (필터 적용 중)
+            </span>
           )}
         </div>
+
+        {(selectedTaste !== 'all' || isDetailFilterActive) && (
+          <button
+            type="button"
+            onClick={handleResetFilters}
+            title="원두 필터 초기화"
+            className="flex cursor-pointer items-center gap-1 rounded-full border border-[#EFECE6] bg-[#FFFFFF] px-3 py-1.5 text-xs font-semibold text-[#78716C] hover:bg-[#FFF5F2] hover:text-[#D97757] hover:border-[#D97757]/30 shadow-xs transition-all"
+          >
+            <RotateCcw className="h-3 w-3" />
+            초기화
+          </button>
+        )}
       </div>
 
       {/* Beans Grid */}
       {filteredBeans.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredBeans.map((bean) => (
-            <div
-              key={bean.id}
-              className="flex flex-col justify-between rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] p-6 shadow-xs transition-all hover:border-[#78716C]/40"
-            >
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-[#FAF8F5] px-2.5 py-0.5 text-xs font-semibold text-[#78716C]">
-                    {bean.brand}
-                  </span>
-                  <span className="text-xs text-[#78716C]">
-                    Roast Lv.{bean.roast}
-                  </span>
+          {filteredBeans.map((bean) => {
+            const brandStyle = BRAND_STYLES[bean.brandId] || {
+              badgeBg: 'bg-[#FAF8F5]',
+              badgeText: 'text-[#78716C]',
+              dot: 'bg-[#78716C]'
+            };
+
+            return (
+              <div
+                key={bean.id}
+                className="flex flex-col justify-between rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] p-6 shadow-xs transition-all hover:border-[#78716C]/40"
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${brandStyle.badgeBg} ${brandStyle.badgeText}`}
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${brandStyle.dot}`} />
+                      {bean.brand}
+                    </span>
+                    <span className="text-xs text-[#78716C]">
+                      Roast Lv.{bean.roast}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-2.5 text-lg sm:text-xl font-bold tracking-tight text-[#231915]">
+                    {bean.name}
+                  </h3>
+                  <p className="mt-1 text-sm text-[#78716C] leading-relaxed">
+                    {bean.description}
+                  </p>
                 </div>
 
-                <h3 className="mt-2.5 text-lg sm:text-xl font-bold tracking-tight text-[#231915]">
-                  {bean.name}
-                </h3>
-                <p className="mt-1 text-sm text-[#78716C] leading-relaxed">
-                  {bean.description}
-                </p>
-              </div>
-
-              <div className="mt-5 space-y-3 border-t border-[#EFECE6] pt-4">
-                {/* Dot meters (로스팅 정도 로 문구 교정) */}
-                <div className="space-y-2 rounded-xl bg-[#FAF8F5] p-3">
-                  {renderDots(bean.roast, '로스팅 정도 (Roast)', 'bg-[#3D2C24]')}
-                  {renderDots(bean.acidity, '산미 (Acidity)', 'bg-[#5B7A5E]')}
-                  {renderDots(bean.body, '바디감 (Body)', 'bg-[#231915]')}
-                </div>
+                <div className="mt-5 space-y-3 border-t border-[#EFECE6] pt-4">
+                  {/* Dot meters (로스팅 #C06236, 산미 #5B7A5E, 바디감 #231915 통일) */}
+                  <div className="space-y-2 rounded-xl bg-[#FAF8F5] p-3">
+                    {renderDots(bean.roast, '로스팅 정도 (Roast)', 'bg-[#C06236]')}
+                    {renderDots(bean.acidity, '산미 (Acidity)', 'bg-[#5B7A5E]')}
+                    {renderDots(bean.body, '바디감 (Body)', 'bg-[#231915]')}
+                  </div>
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 pt-1">
@@ -328,7 +359,8 @@ export default function BeanGuideView({ onSelectBeanToDrinks }) {
                 </div>
               </div>
             </div>
-          ))}
+          );
+        })}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#EFECE6] bg-[#FFFFFF] py-16 text-center">

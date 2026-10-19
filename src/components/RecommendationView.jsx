@@ -5,20 +5,20 @@ import {
   AlertCircle,
   SlidersHorizontal,
   ChevronDown,
-  ChevronRight,
-  X
+  X,
+  Shuffle
 } from 'lucide-react';
 import menusData from '../data/menus.json';
 import beansData from '../data/beans.json';
 import DrinkCard from './DrinkCard';
 
 // 1. 실제 검색 트렌드 기반 5대 구어체 상황별 테마
-export const TREND_THEMES = [
+const TREND_THEMES = [
   {
     id: 'nutty-heavy',
     title: '산미 없이 고소하고 묵직한 커피',
     subtitle: '호불호 없는 다크초콜릿·견과류 풍미의 데일리 커피',
-    badge: '대중적 베스트',
+    badge: '시그니처 베스트',
     exploreCurationId: 'all',
     exploreCategoryId: '에스프레소·커피',
     match: (drink, bean) => {
@@ -31,14 +31,14 @@ export const TREND_THEMES = [
     }
   },
   {
-    id: 'diet-zero',
-    title: '식단 중에도 죄책감 없는 제로·저당',
-    subtitle: '트레이너·영양사가 추천하는 당류 5g 이하 & 저칼로리 메뉴',
-    badge: '다이어트 픽',
-    exploreCurationId: 'diet',
+    id: 'commute-booster',
+    title: '출근길·야근 전 잠 확 깨는 고카페인 수혈',
+    subtitle: '가성비와 각성 효과를 모두 챙긴 카페인 150mg 이상 부스터',
+    badge: '카페인 부스트',
+    exploreCurationId: 'booster',
     exploreCategoryId: 'all',
     match: (drink) => {
-      return (drink.sugar <= 5 && drink.calories <= 50) || drink.name.includes('제로') || drink.name.includes('노슈거');
+      return drink.caffeine >= 150;
     }
   },
   {
@@ -53,14 +53,14 @@ export const TREND_THEMES = [
     }
   },
   {
-    id: 'commute-booster',
-    title: '출근길·야근 전 잠 확 깨는 고카페인 수혈',
-    subtitle: '가성비와 각성 효과를 모두 챙긴 카페인 150mg 이상 부스터',
-    badge: '에너지 부스터',
-    exploreCurationId: 'booster',
+    id: 'diet-zero',
+    title: '식단 중에도 죄책감 없는 제로·저당',
+    subtitle: '트레이너·영양사가 추천하는 당류 5g 이하 & 저칼로리 메뉴',
+    badge: '다이어트 픽',
+    exploreCurationId: 'diet',
     exploreCategoryId: 'all',
     match: (drink) => {
-      return drink.caffeine >= 150;
+      return (drink.sugar <= 5 && drink.calories <= 50) || drink.name.includes('제로') || drink.name.includes('노슈거');
     }
   },
   {
@@ -273,24 +273,44 @@ export default function RecommendationView({ onSelectDrink, onNavigateToExplore 
     }).length;
   }, [currentTheme, beansMap]);
 
+  // 결정 장애를 위한 무작위 메뉴 추천
+  const handleRandomPick = () => {
+    if (!menusData || menusData.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * menusData.length);
+    const randomDrink = menusData[randomIndex];
+    onSelectDrink(randomDrink);
+  };
+
   return (
     <div className="space-y-4 sm:space-y-5">
-      {/* 1. 상단: 메인 타이틀 및 서브카피 시선 집중 좌측 정렬 */}
+      {/* 1. 상단: 메인 타이틀 및 서브카피 시선 집중 좌측 정렬 & 랜덤 추천 셔플 버튼 */}
       <section className="space-y-2.5">
-        <div className="px-1">
-          <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-xs font-semibold tracking-wider text-[#78716C]">
-            오늘의 맞춤 큐레이션
-          </span>
-          <h2 className="mt-1.5 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#231915]">
-            오늘 어떤 커피를 찾으시나요?
-          </h2>
-          <p className="mt-1.5 text-sm text-[#78716C] leading-relaxed">
-            포털 인기 검색어와 영양성분을 바탕으로 지금 딱 맞는 한 잔을 제안합니다.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 px-1">
+          <div>
+            <span className="inline-block rounded-full bg-[#EFECE6] px-3 py-1 text-xs font-semibold tracking-wider text-[#78716C]">
+              오늘의 맞춤 큐레이션
+            </span>
+            <h2 className="mt-1.5 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#231915]">
+              오늘 어떤 커피를 찾으시나요?
+            </h2>
+            <p className="hidden sm:block mt-1.5 text-sm text-[#78716C] leading-relaxed">
+              포털 인기 검색어와 영양성분을 바탕으로 지금 딱 맞는 한 잔을 제안합니다.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleRandomPick}
+            className="group flex cursor-pointer items-center justify-center gap-1.5 self-start sm:self-auto rounded-xl border border-[#231915]/25 bg-[#FFFFFF] px-3.5 py-2 text-xs font-bold text-[#231915] shadow-2xs transition-all hover:border-[#231915] hover:bg-[#FAF8F5] active:scale-95"
+            title="결정 장애를 위한 무작위 메뉴 추천"
+          >
+            <Shuffle className="h-3.5 w-3.5 text-[#D97757] transition-transform group-hover:rotate-45" />
+            <span>오늘 뭐 마시지?</span>
+          </button>
         </div>
 
-        {/* 5대 테마 카드 그리드 (단어 단위 줄바꿈 break-keep & 시각적 위계 교정) */}
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
+        {/* 5대 테마 카드: 모바일에서는 가로 스와이프 캐러셀, 데스크톱(sm 이상)에서는 그리드 유지 */}
+        <div className="flex gap-2.5 overflow-x-auto pb-1.5 scrollbar-hide snap-x sm:grid sm:grid-cols-2 lg:grid-cols-5 sm:gap-2 sm:overflow-visible sm:pb-0">
           {TREND_THEMES.map((theme) => {
             const isSelected = selectedThemeId === theme.id;
             return (
@@ -302,7 +322,7 @@ export default function RecommendationView({ onSelectDrink, onNavigateToExplore 
                   setSelectedStyle('all');
                   setSelectedFlavor('all');
                 }}
-                className={`group flex cursor-pointer flex-col justify-between rounded-2xl border p-3.5 sm:p-4 text-left transition-all duration-200 ${
+                className={`group flex cursor-pointer flex-col justify-between rounded-2xl border p-3.5 sm:p-4 text-left transition-all duration-200 shrink-0 w-[230px] snap-start sm:w-auto sm:shrink ${
                   isSelected
                     ? 'border-[#231915] bg-[#231915] text-[#FAF8F5] shadow-md ring-1 ring-[#231915]'
                     : 'border-[#EFECE6] bg-[#FFFFFF] text-[#231915] hover:border-[#78716C]/40 hover:bg-[#FAF8F5]'
@@ -350,12 +370,12 @@ export default function RecommendationView({ onSelectDrink, onNavigateToExplore 
             onClick={() => setIsFilterOpen(!isFilterOpen)}
             className="flex h-9 w-full cursor-pointer items-center justify-between rounded-xl border border-[#EFECE6] bg-[#FFFFFF] px-3.5 text-xs sm:text-sm text-[#574E4A] shadow-2xs transition-all hover:border-[#78716C]/40 hover:bg-[#FAF8F5]"
           >
-            <div className="flex items-center gap-1.5 font-medium">
-              <SlidersHorizontal className="h-3.5 w-3.5 text-[#78716C]" />
-              <span>+ 입맛에 맞는 세부 취향 선택 (스타일·맛)</span>
+            <div className="flex items-center gap-1.5 font-medium min-w-0">
+              <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-[#78716C]" />
+              <span className="truncate break-keep">+ 입맛에 맞는 세부 취향 선택 (스타일·맛)</span>
             </div>
             <ChevronDown
-              className={`h-3.5 w-3.5 text-[#78716C] transition-transform duration-200 ${
+              className={`h-3.5 w-3.5 shrink-0 text-[#78716C] transition-transform duration-200 ${
                 isFilterOpen ? 'rotate-180' : ''
               }`}
             />
@@ -365,14 +385,14 @@ export default function RecommendationView({ onSelectDrink, onNavigateToExplore 
             <button
               type="button"
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="flex cursor-pointer items-center gap-1.5 font-semibold hover:underline"
+              className="flex cursor-pointer items-center gap-1.5 font-semibold hover:underline min-w-0"
             >
-              <SlidersHorizontal className="h-3.5 w-3.5 text-[#D97757]" />
-              <span>
+              <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-[#D97757]" />
+              <span className="truncate break-keep">
                 세부 조율 중 ({filterSummaryText})
               </span>
               <ChevronDown
-                className={`h-3.5 w-3.5 text-[#78716C] transition-transform duration-200 ${
+                className={`h-3.5 w-3.5 shrink-0 text-[#78716C] transition-transform duration-200 ${
                   isFilterOpen ? 'rotate-180' : ''
                 }`}
               />
@@ -465,11 +485,8 @@ export default function RecommendationView({ onSelectDrink, onNavigateToExplore 
             <span className="text-sm font-bold text-[#231915]">
               지금 추천하는 메뉴 {displayDrinks.length}선
             </span>
-            <span className="ml-2 text-xs text-[#78716C]">
-              ('{currentTheme.title}' 테마 기준)
-            </span>
           </div>
-          <span className="text-xs text-[#78716C]">
+          <span className="hidden sm:inline text-xs text-[#78716C]">
             카드 클릭 시 성분 상세 & 담기
           </span>
         </div>
@@ -504,10 +521,10 @@ export default function RecommendationView({ onSelectDrink, onNavigateToExplore 
               categoryId: currentTheme.exploreCategoryId
             });
           }}
-          className="group flex cursor-pointer items-center justify-center gap-2 w-full sm:w-auto rounded-2xl bg-[#231915] px-7 py-3.5 text-xs sm:text-sm font-semibold text-[#FAF8F5] shadow-xs hover:bg-[#3D2C24] hover:shadow-md transition-all"
+          className="group flex cursor-pointer items-center justify-center gap-2 w-full sm:w-80 h-[52px] rounded-2xl bg-[#231915] px-5 sm:px-6 text-xs sm:text-sm font-semibold text-[#FAF8F5] shadow-xs hover:bg-[#3D2C24] hover:shadow-md transition-all break-keep text-center"
         >
-          <span>이 조건에 맞는 음료 더 찾아보기 (총 {totalThemeMatchCount}개)</span>
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          <span>조건에 맞는 음료 더 찾아보기 (총 {totalThemeMatchCount}개)</span>
+          <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
         </button>
 
         <button
@@ -518,10 +535,9 @@ export default function RecommendationView({ onSelectDrink, onNavigateToExplore 
               categoryId: 'all'
             });
           }}
-          className="flex cursor-pointer items-center justify-center gap-1.5 w-full sm:w-auto rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] px-6 py-3.5 text-xs sm:text-sm font-semibold text-[#78716C] hover:text-[#231915] hover:border-[#78716C]/40 transition-all"
+          className="flex cursor-pointer items-center justify-center gap-1.5 w-full sm:w-80 h-[52px] rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] px-5 sm:px-6 text-xs sm:text-sm font-semibold text-[#78716C] hover:text-[#231915] hover:border-[#78716C]/40 shadow-xs transition-all break-keep text-center"
         >
           <span>전체 음료 목록 둘러보기 →</span>
-          <ChevronRight className="h-4 w-4" />
         </button>
       </section>
     </div>

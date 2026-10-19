@@ -1,7 +1,6 @@
 import React from 'react';
 import brandsData from '../data/brands.json';
 import menusData from '../data/menus.json';
-import { Award, Zap, DollarSign, Droplet } from 'lucide-react';
 
 export default function BrandCompareView() {
   // Calculate average caffeine & calorie for each brand
@@ -46,20 +45,22 @@ export default function BrandCompareView() {
           >
             <div>
               {/* Brand Top Header */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2.5">
                   <span
-                    className="h-3.5 w-3.5 rounded-full shadow-xs"
+                    className="h-3.5 w-3.5 rounded-full shadow-xs shrink-0 mt-0.5"
                     style={{ backgroundColor: brand.color }}
                   />
-                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-[#231915]">
-                    {brand.name}
-                  </h3>
-                  <span className="text-xs text-[#78716C]">
-                    {brand.nameEn}
-                  </span>
+                  <div className="flex flex-col">
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-[#231915] leading-tight">
+                      {brand.name}
+                    </h3>
+                    <span className="text-xs text-[#78716C] leading-none mt-1">
+                      {brand.nameEn}
+                    </span>
+                  </div>
                 </div>
-                <span className="rounded-full bg-[#FAF8F5] px-2.5 py-0.5 text-xs font-semibold text-[#78716C]">
+                <span className="shrink-0 rounded-full bg-[#FAF8F5] px-2.5 py-1 text-xs font-semibold text-[#78716C] border border-[#EFECE6] whitespace-nowrap">
                   {brand.tagline}
                 </span>
               </div>
@@ -68,44 +69,31 @@ export default function BrandCompareView() {
                 {brand.description}
               </p>
 
-              {/* Infographic KPI Stats (문구 교정: 아메리카노 기준 가격, 기본 사이즈 용량, 100ml당 가격) */}
-              <div className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-                <div className="rounded-xl border border-[#EFECE6] bg-[#FAF8F5] p-3 text-center">
-                  <div className="flex items-center justify-center text-[#78716C] mb-1">
-                    <DollarSign className="h-4 w-4" />
-                  </div>
-                  <span className="text-xs text-[#78716C] whitespace-nowrap">아메리카노 가격</span>
-                  <p className="mt-0.5 text-sm font-semibold text-[#231915]">
+              {/* Infographic KPI Stats: 3대 핵심 지표 1열 슬림 바 (높이 대폭 절감) */}
+              <div className="mt-4 grid grid-cols-3 divide-x divide-[#EFECE6] rounded-xl border border-[#EFECE6] bg-[#FAF8F5] py-2.5 text-center">
+                <div className="px-1 sm:px-2">
+                  <span className="text-[11px] sm:text-xs text-[#78716C] block whitespace-nowrap">
+                    아메리카노 가격
+                  </span>
+                  <p className="mt-1 text-xs sm:text-sm font-bold text-[#231915]">
                     {brand.americanoInfo.price.toLocaleString()}원
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-[#EFECE6] bg-[#FAF8F5] p-3 text-center">
-                  <div className="flex items-center justify-center text-[#78716C] mb-1">
-                    <Droplet className="h-4 w-4" />
-                  </div>
-                  <span className="text-xs text-[#78716C]">기본 사이즈 용량</span>
-                  <p className="mt-0.5 text-sm font-semibold text-[#231915]">
+                <div className="px-1 sm:px-2">
+                  <span className="text-[11px] sm:text-xs text-[#78716C] block whitespace-nowrap">
+                    기본 사이즈
+                  </span>
+                  <p className="mt-1 text-xs sm:text-sm font-bold text-[#231915]">
                     {brand.americanoInfo.volume}ml
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-[#EFECE6] bg-[#FAF8F5] p-3 text-center">
-                  <div className="flex items-center justify-center text-[#78716C] mb-1">
-                    <Award className="h-4 w-4" />
-                  </div>
-                  <span className="text-xs text-[#78716C]">100ml당 가격</span>
-                  <p className="mt-0.5 text-sm font-semibold text-[#231915]">
-                    {brand.americanoInfo.pricePer100ml}원
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-[#EFECE6] bg-[#FAF8F5] p-3 text-center">
-                  <div className="flex items-center justify-center text-[#78716C] mb-1">
-                    <Zap className="h-4 w-4" />
-                  </div>
-                  <span className="text-xs text-[#78716C]">평균 카페인</span>
-                  <p className="mt-0.5 text-sm font-semibold text-[#231915]">
+                <div className="px-1 sm:px-2">
+                  <span className="text-[11px] sm:text-xs text-[#78716C] block whitespace-nowrap">
+                    평균 카페인
+                  </span>
+                  <p className="mt-1 text-xs sm:text-sm font-bold text-[#231915]">
                     {brand.avgCaffeine}mg
                   </p>
                 </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Coffee, AlertCircle, Sparkles } from 'lucide-react';
+import { Coffee, Sparkles, TriangleAlert } from 'lucide-react';
 
 export default function Header({
   activeTab,
@@ -35,7 +35,7 @@ export default function Header({
                 Today's Coffee
               </span>
             </div>
-            <p className="text-xs sm:text-[13px] leading-tight text-[#78716C] mt-0.5">
+            <p className="hidden sm:block text-xs sm:text-[13px] leading-tight text-[#78716C] mt-0.5">
               데일리 큐레이션 & 성분 탐색
             </p>
           </div>
@@ -53,7 +53,7 @@ export default function Header({
             }`}
           >
             <Sparkles className="h-3.5 w-3.5" />
-            <span>커피 추천</span>
+            <span>추천 커피</span>
           </button>
           <button
             type="button"
@@ -97,35 +97,28 @@ export default function Header({
             onClick={onOpenTracker}
             className={`group flex cursor-pointer items-center gap-2.5 rounded-2xl border px-3 py-1.5 text-left transition-all ${
               isOverLimit
-                ? 'border-[#D97757]/40 bg-[#FFF5F2] hover:border-[#D97757]'
+                ? 'border-[#D97757] ring-1 ring-[#D97757]/30 bg-[#FFF5F2]'
                 : 'border-[#EFECE6] bg-[#FFFFFF] hover:border-[#78716C]/40 shadow-xs'
             }`}
           >
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-medium text-[#78716C]">
+                <span className="text-xs font-medium text-[#78716C] whitespace-nowrap">
                   오늘 섭취량
                 </span>
-                {isOverLimit ? (
-                  <span className="inline-flex items-center gap-0.5 rounded-full bg-[#D97757] px-1.5 py-0.2 text-xs font-semibold text-white">
-                    <AlertCircle className="h-3 w-3" />
-                    권장량 초과
-                  </span>
-                ) : (
-                  <span className="text-xs text-[#78716C]">
-                    (기준 400mg)
-                  </span>
+                {isOverLimit && (
+                  <TriangleAlert className="h-3.5 w-3.5 text-[#D97757] shrink-0" />
                 )}
               </div>
-              <div className="flex items-baseline gap-1">
+              <div className="flex items-baseline gap-1 font-mono tabular-nums">
                 <span
-                  className={`text-base font-bold tracking-tight ${
+                  className={`text-base font-bold tracking-tight inline-block min-w-[34px] sm:min-w-[40px] text-right ${
                     isOverLimit ? 'text-[#D97757]' : 'text-[#231915]'
                   }`}
                 >
                   {totalCaffeine}
                 </span>
-                <span className="text-xs text-[#78716C]">/ 400 mg</span>
+                <span className="text-xs text-[#78716C] font-sans">/ 400 mg</span>
               </div>
             </div>
 
@@ -140,7 +133,7 @@ export default function Header({
                 />
               </div>
               <span
-                className={`text-xs font-semibold ${
+                className={`text-xs font-semibold tabular-nums min-w-[32px] text-right ${
                   isOverLimit ? 'text-[#D97757]' : 'text-[#78716C]'
                 }`}
               >
@@ -160,7 +153,7 @@ export default function Header({
             activeTab === 'recommendation' ? 'font-bold text-[#231915] border-b-2 border-[#231915]' : 'text-[#78716C]'
           }`}
         >
-          커피 추천
+          추천 커피
         </button>
         <button
           type="button"
@@ -187,7 +180,7 @@ export default function Header({
             activeTab === 'brands' ? 'font-bold text-[#231915] border-b-2 border-[#231915]' : 'text-[#78716C]'
           }`}
         >
-          브랜드 한눈에 보기
+          브랜드 비교
         </button>
       </div>
     </header>

@@ -75,22 +75,22 @@ export default function DrinkCard({ drink, onSelectDrink, topSlot }) {
 
         {/* Top Header: Brand & Volume & Arrow */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 min-w-0">
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${brandStyle.badgeBg} ${brandStyle.badgeText}`}
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0 ${brandStyle.badgeBg} ${brandStyle.badgeText}`}
             >
               <span className={`h-1.5 w-1.5 rounded-full ${brandStyle.dot}`} />
               {drink.brand}
             </span>
-            <span className="text-xs text-[#78716C]">
+            <span className="text-xs text-[#78716C] shrink-0">
               {drink.volume}ml
             </span>
-            <span className="text-xs text-[#78716C]/70">
+            <span className="text-xs text-[#78716C]/70 truncate whitespace-nowrap">
               · {drink.category}
             </span>
           </div>
 
-          <div className="flex items-center text-[#78716C] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#231915]">
+          <div className="flex items-center text-[#78716C] shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#231915]">
             <ArrowUpRight className="h-4 w-4" />
           </div>
         </div>

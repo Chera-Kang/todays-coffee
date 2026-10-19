@@ -58,6 +58,16 @@ export default function UnifiedFilterPanel({
   onResetFilters,
   resultCount
 }) {
+  const [isMobile, setIsMobile] = React.useState(
+    typeof window !== 'undefined' ? window.innerWidth < 640 : false
+  );
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const isAnyFilterActive =
     selectedCuration !== 'all' ||
     selectedCategory !== 'all' ||
@@ -69,8 +79,8 @@ export default function UnifiedFilterPanel({
     <div className="rounded-3xl border border-[#EFECE6] bg-[#FFFFFF] p-5 shadow-xs sm:p-6 space-y-4">
       {/* 1단: 검색 & 정렬 & 목적별 빠른 필터 칩 */}
       <div className="space-y-3">
-        {/* Search Bar + Sort Dropdown */}
-        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+        {/* Search Bar + Reset Button */}
+        <div className="flex items-center gap-2">
           {/* Keyword Search Input */}
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#78716C]" />
@@ -78,7 +88,7 @@ export default function UnifiedFilterPanel({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="음료명, 카테고리, 원두, 태그 검색 (예: 자허블, 말차, 아메리카노)"
+              placeholder={isMobile ? "검색어를 입력하세요" : "음료명, 카테고리, 원두, 태그 검색 (예: 자허블, 말차, 아메리카노)"}
               className="w-full rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] py-2.5 pl-10 pr-10 text-base text-[#231915] placeholder:text-[#78716C]/60 focus:border-[#231915] focus:bg-[#FFFFFF] focus:outline-none sm:text-sm transition-colors"
             />
             {searchQuery && (
@@ -92,31 +102,18 @@ export default function UnifiedFilterPanel({
             )}
           </div>
 
-          {/* Sort Selection & Reset */}
-          <div className="flex items-center gap-2 shrink-0">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="cursor-pointer rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] px-3.5 py-2.5 text-xs sm:text-sm font-medium text-[#231915] focus:border-[#231915] focus:outline-none"
+          {isAnyFilterActive && (
+            <button
+              type="button"
+              onClick={onResetFilters}
+              title="모든 필터 초기화"
+              className="flex shrink-0 cursor-pointer items-center gap-1 rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#78716C] hover:bg-[#FFF5F2] hover:text-[#D97757] hover:border-[#D97757]/30 transition-all"
             >
-              <option value="default">기본순</option>
-              <option value="caffeine-desc">카페인 높은순</option>
-              <option value="calories-asc">칼로리 낮은순</option>
-              <option value="sugar-asc">당류 낮은순</option>
-            </select>
-
-            {isAnyFilterActive && (
-              <button
-                type="button"
-                onClick={onResetFilters}
-                title="모든 필터 초기화"
-                className="flex cursor-pointer items-center gap-1 rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] px-3 py-2 text-xs sm:text-sm font-semibold text-[#78716C] hover:bg-[#FFF5F2] hover:text-[#D97757] hover:border-[#D97757]/30 transition-all"
-              >
-                <RotateCcw className="h-3 w-3" />
-                초기화
-              </button>
-            )}
-          </div>
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">필터 초기화</span>
+              <span className="sm:hidden">초기화</span>
+            </button>
+          )}
         </div>
 
         {/* 1단 하부: 목적별 빠른 큐레이션 칩 (가로 스크롤) */}

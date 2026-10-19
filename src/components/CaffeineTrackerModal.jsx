@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Trash2, AlertTriangle, Coffee, RotateCcw, ShieldCheck } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { X, Trash2, AlertTriangle, Coffee, RotateCcw, ShieldCheck, Moon } from 'lucide-react';
 
 export default function CaffeineTrackerModal({
   isOpen,
@@ -20,13 +20,39 @@ export default function CaffeineTrackerModal({
   const barWidth = Math.min(actualPercentage, 100);
   const isOverLimit = totalCaffeine > 400;
 
+  // Sleep Cut-off Guide based on caffeine half-life (5~6 hours)
+  const sleepGuide = useMemo(() => {
+    if (totalCaffeine === 0) {
+      return {
+        title: '아직 카페인 섭취 전입니다',
+        desc: '상쾌한 하루를 위한 첫 잔을 골라보세요. 밤 11시 취침 기준, 오후 4시 전까지 카페인 음료를 즐기기 좋습니다.'
+      };
+    }
+    if (totalCaffeine <= 150) {
+      return {
+        title: '가벼운 각성 상태 (숙면 안심)',
+        desc: '체내 반감기(약 5~6시간)를 고려할 때, 오후 4시 이전까지는 추가 섭취해도 밤 11시 숙면에 무리가 없습니다.'
+      };
+    }
+    if (totalCaffeine <= 350) {
+      return {
+        title: '적정 활력 충전 완료',
+        desc: '현재 체내에 충분한 카페인이 작용 중입니다. 추가 커피는 디카페인이나 허브티를 선택하시면 편안한 밤을 보낼 수 있어요.'
+      };
+    }
+    return {
+      title: '카페인 상한선 도달 / 초과 주의',
+      desc: '카페인 대사 분해에 7시간 이상 소요될 수 있습니다. 오늘 추가 카페인 섭취는 쉬어가고 미온수를 충분히 섭취해 주세요.'
+    };
+  }, [totalCaffeine]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#231915]/60 backdrop-blur-xs sm:items-center sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#231915]/60 backdrop-blur-xs">
       {/* Background Backdrop Click */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Centered Modal / Bottom Sheet Box (dvh aware) */}
-      <div className="relative z-10 flex max-h-[90dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border border-[#EFECE6] bg-[#FFFFFF] shadow-2xl sm:rounded-3xl">
+      {/* Centered Modal Box (화면 중앙 & dvh aware) */}
+      <div className="relative z-10 flex max-h-[88dvh] w-full max-w-lg flex-col overflow-hidden rounded-3xl border border-[#EFECE6] bg-[#FFFFFF] shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#EFECE6] px-6 py-4">
           <div className="flex items-center gap-2.5">
@@ -117,6 +143,24 @@ export default function CaffeineTrackerModal({
                 <span className="text-[11px] text-[#78716C]">합산 당류</span>
                 <p className="font-bold text-[#231915] mt-0.5">{totalSugar} g</p>
               </div>
+            </div>
+          </div>
+
+          {/* Sleep Cut-off Guide Card */}
+          <div className="flex items-start gap-3 rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] p-3.5">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#231915] text-[#FAF8F5]">
+              <Moon className="h-3.5 w-3.5 text-[#D97757]" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#78716C]">
+                  숙면 안심 가이드 (반감기 5~6h)
+                </span>
+              </div>
+              <p className="mt-0.5 text-xs font-bold text-[#231915]">{sleepGuide.title}</p>
+              <p className="mt-0.5 text-[11px] leading-relaxed text-[#78716C] break-keep">
+                {sleepGuide.desc}
+              </p>
             </div>
           </div>
 

@@ -1,19 +1,63 @@
-import React, { useState } from 'react';
-import { X, Check, AlertCircle, Info, PlusCircle } from 'lucide-react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { X, Check, AlertCircle, Info, PlusCircle, ArrowRight } from 'lucide-react';
 import DrinkThumbnail from './DrinkThumbnail';
+import menusData from '../data/menus.json';
+
+const BRAND_STYLES = {
+  starbucks: { badgeBg: 'bg-[#EBF5F0]', badgeText: 'text-[#00704A]', dot: 'bg-[#00704A]' },
+  megacoffee: { badgeBg: 'bg-[#FEF9E6]', badgeText: 'text-[#8A6D00]', dot: 'bg-[#D4A017]' },
+  compose: { badgeBg: 'bg-[#FFF7EB]', badgeText: 'text-[#A05E00]', dot: 'bg-[#E69C24]' },
+  paulbassett: { badgeBg: 'bg-[#FAEAEC]', badgeText: 'text-[#A6192E]', dot: 'bg-[#A6192E]' },
+  twosome: { badgeBg: 'bg-[#FDF0F0]', badgeText: 'text-[#D62734]', dot: 'bg-[#D62734]' },
+  ediya: { badgeBg: 'bg-[#EDF2FA]', badgeText: 'text-[#1B3B8A]', dot: 'bg-[#1B3B8A]' },
+  paik: { badgeBg: 'bg-[#FEFCE8]', badgeText: 'text-[#926004]', dot: 'bg-[#F5B800]' },
+  hollys: { badgeBg: 'bg-[#FDF2F3]', badgeText: 'text-[#BA1828]', dot: 'bg-[#BA1828]' }
+};
 
 export default function DrinkDetailModal({
   drink,
   bean,
   isOpen,
   onClose,
-  onAddDrink
+  onAddDrink,
+  onSelectDrink
 }) {
   const [memo, setMemo] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
+  const contentRef = useRef(null);
+
+  // 음료 변경 시(타 브랜드 메뉴 선택 등) 스크롤 즉시 최상단 초기화
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+    setMemo('');
+    setErrorMessage('');
+    setIsSuccess(false);
+  }, [drink?.id]);
+
+  // 타 브랜드 대체 음료 추천 (동일 카테고리이면서 다른 브랜드 2종)
+  const rivalDrinks = useMemo(() => {
+    if (!drink) return [];
+    return menusData
+      .filter((m) => m.brandId !== drink.brandId && (m.category === drink.category || m.boundaryTag === drink.boundaryTag))
+      .slice(0, 2);
+  }, [drink]);
 
   if (!isOpen || !drink) return null;
+
+  const brandStyle = BRAND_STYLES[drink.brandId] || {
+    badgeBg: 'bg-[#FAF8F5]',
+    badgeText: 'text-[#78716C]',
+    dot: 'bg-[#78716C]'
+  };
+
+  const beanBrandStyle = bean ? (BRAND_STYLES[bean.brandId] || {
+    badgeBg: 'bg-[#FAF8F5]',
+    badgeText: 'text-[#78716C]',
+    dot: 'bg-[#78716C]'
+  }) : null;
 
   // Validation Rule:
   // - Max 30 chars
@@ -66,8 +110,8 @@ export default function DrinkDetailModal({
     }, 700);
   };
 
-  // Render 5-dot rating
-  const renderDots = (value, label) => {
+  // Render 5-dot rating with 3 tailored colors
+  const renderDots = (value, label, activeColor = 'bg-[#231915]') => {
     return (
       <div className="flex items-center justify-between text-xs">
         <span className="text-[#78716C]">{label}</span>
@@ -75,8 +119,8 @@ export default function DrinkDetailModal({
           {[1, 2, 3, 4, 5].map((num) => (
             <span
               key={num}
-              className={`h-2 w-2 rounded-full transition-colors ${
-                num <= value ? 'bg-[#231915]' : 'bg-[#EFECE6]'
+              className={`h-2.5 w-2.5 rounded-full transition-colors ${
+                num <= value ? activeColor : 'bg-[#EFECE6]'
               }`}
             />
           ))}
@@ -86,16 +130,19 @@ export default function DrinkDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#231915]/60 backdrop-blur-xs sm:items-center sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#231915]/60 backdrop-blur-xs">
       {/* Background Backdrop Click */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Modal / Bottom Sheet Box (dvh aware) */}
-      <div className="relative z-10 flex max-h-[90dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-3xl border border-[#EFECE6] bg-[#FFFFFF] shadow-2xl sm:rounded-3xl">
+      {/* Modal / Dialog Box (화면 중앙 정렬 & dvh 대응) */}
+      <div className="relative z-10 flex max-h-[88dvh] w-full max-w-xl flex-col overflow-hidden rounded-3xl border border-[#EFECE6] bg-[#FFFFFF] shadow-2xl">
         {/* Sticky Header */}
         <div className="flex items-center justify-between border-b border-[#EFECE6] px-6 py-4 bg-[#FFFFFF]">
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-[#FAF8F5] px-2.5 py-0.5 text-xs font-semibold text-[#78716C]">
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${brandStyle.badgeBg} ${brandStyle.badgeText}`}
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${brandStyle.dot}`} />
               {drink.brand}
             </span>
             <span className="text-xs text-[#78716C]">· {drink.category}</span>
@@ -110,7 +157,7 @@ export default function DrinkDetailModal({
         </div>
 
         {/* Scrollable Content (Scrollbar Hidden via scrollbar-hide) */}
-        <div className="flex-1 overflow-y-auto scrollbar-hide px-6 py-5 space-y-5">
+        <div ref={contentRef} className="flex-1 overflow-y-auto scrollbar-hide px-6 py-5 space-y-5">
           {/* Visual Thumbnail + Title & Description (폰트 스케일업) */}
           <div className="flex items-start gap-4">
             <DrinkThumbnail drink={drink} size={72} className="shrink-0" />
@@ -137,12 +184,6 @@ export default function DrinkDetailModal({
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
               <div className="rounded-xl border border-[#EFECE6] bg-[#FFFFFF] p-2.5 text-center">
-                <span className="text-xs text-[#78716C]">칼로리</span>
-                <p className="mt-0.5 text-sm font-semibold text-[#231915]">
-                  {drink.calories} <span className="text-xs font-normal text-[#78716C]">kcal</span>
-                </p>
-              </div>
-              <div className="rounded-xl border border-[#EFECE6] bg-[#FFFFFF] p-2.5 text-center">
                 <span className="text-xs text-[#78716C]">카페인</span>
                 <p className={`mt-0.5 text-sm font-semibold ${drink.caffeine >= 150 ? 'text-[#D97757]' : drink.caffeine <= 30 ? 'text-[#5B7A5E]' : 'text-[#231915]'}`}>
                   {drink.caffeine} <span className="text-xs font-normal text-[#78716C]">mg</span>
@@ -152,6 +193,12 @@ export default function DrinkDetailModal({
                 <span className="text-xs text-[#78716C]">당류</span>
                 <p className={`mt-0.5 text-sm font-semibold ${drink.sugar <= 5 ? 'text-[#5B7A5E]' : 'text-[#231915]'}`}>
                   {drink.sugar} <span className="text-xs font-normal text-[#78716C]">g</span>
+                </p>
+              </div>
+              <div className="rounded-xl border border-[#EFECE6] bg-[#FFFFFF] p-2.5 text-center">
+                <span className="text-xs text-[#78716C]">칼로리</span>
+                <p className="mt-0.5 text-sm font-semibold text-[#231915]">
+                  {drink.calories} <span className="text-xs font-normal text-[#78716C]">kcal</span>
                 </p>
               </div>
               <div className="rounded-xl border border-[#EFECE6] bg-[#FFFFFF] p-2.5 text-center">
@@ -169,9 +216,17 @@ export default function DrinkDetailModal({
           {/* Matched Bean Characteristics (자연스러운 문구 교정) */}
           {bean && (
             <div className="rounded-2xl border border-[#EFECE6] bg-[#FFFFFF] p-4">
-              <span className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">
-                원두 프로필 안내
-              </span>
+              <div className="flex items-center justify-between">
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${beanBrandStyle.badgeBg} ${beanBrandStyle.badgeText}`}
+                >
+                  <span className={`h-1.5 w-1.5 rounded-full ${beanBrandStyle.dot}`} />
+                  {bean.brand}
+                </span>
+                <span className="text-xs text-[#78716C]">
+                  Roast Lv.{bean.roast}
+                </span>
+              </div>
               <h4 className="mt-1 text-base font-bold tracking-tight text-[#231915]">
                 {bean.name}
               </h4>
@@ -179,11 +234,11 @@ export default function DrinkDetailModal({
                 {bean.description}
               </p>
 
-              {/* Dots Rating (로스팅 정도 로 문구 교정) */}
+              {/* Dots Rating (로스팅 #C06236, 산미 #5B7A5E, 바디감 #231915 통일) */}
               <div className="mt-3.5 space-y-2 rounded-xl bg-[#FAF8F5] p-3">
-                {renderDots(bean.roast, '로스팅 정도 (Roast)')}
-                {renderDots(bean.acidity, '산미 (Acidity)')}
-                {renderDots(bean.body, '바디감 (Body)')}
+                {renderDots(bean.roast, '로스팅 정도 (Roast)', 'bg-[#C06236]')}
+                {renderDots(bean.acidity, '산미 (Acidity)', 'bg-[#5B7A5E]')}
+                {renderDots(bean.body, '바디감 (Body)', 'bg-[#231915]')}
               </div>
 
               {/* Tasting Notes Tags */}
@@ -218,8 +273,8 @@ export default function DrinkDetailModal({
                 value={memo}
                 onChange={handleMemoChange}
                 maxLength={30}
-                placeholder="예: 산뜻하고 달콤해서 오후 리프레시에 제격 (선택 입력)"
-                className="w-full rounded-xl border border-[#EFECE6] bg-[#FFFFFF] px-3.5 py-2.5 text-base text-[#231915] placeholder:text-[#78716C]/60 focus:border-[#231915] focus:outline-none focus:ring-1 focus:ring-[#231915]"
+                placeholder="한줄 메모 입력해주세요."
+                className="w-full rounded-xl border border-[#EFECE6] bg-[#FFFFFF] px-3.5 py-2.5 text-base sm:text-sm text-[#231915] placeholder:text-[#78716C]/60 focus:border-[#231915] focus:outline-none focus:ring-1 focus:ring-[#231915]"
               />
             </div>
 
@@ -231,10 +286,56 @@ export default function DrinkDetailModal({
               </div>
             )}
           </div>
+
+          {/* 타 브랜드 추천 메뉴 (프랜차이즈 간 가성비/영양 비교) */}
+          {rivalDrinks.length > 0 && (
+            <div className="rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] p-4 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#231915]">
+                  타 브랜드 메뉴 비교
+                </span>
+                <span className="text-[11px] text-[#78716C]">
+                  동일 카테고리 추천
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {rivalDrinks.map((rival) => {
+                  const rivalStyle = BRAND_STYLES[rival.brandId] || {
+                    badgeBg: 'bg-[#FFFFFF]',
+                    badgeText: 'text-[#78716C]',
+                    dot: 'bg-[#78716C]'
+                  };
+                  return (
+                    <div
+                      key={rival.id}
+                      onClick={() => onSelectDrink && onSelectDrink(rival)}
+                      className="group flex cursor-pointer items-center justify-between rounded-xl border border-[#EFECE6] bg-[#FFFFFF] p-2.5 transition-all hover:border-[#78716C]/40 hover:shadow-xs"
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.2 text-[10px] font-semibold ${rivalStyle.badgeBg} ${rivalStyle.badgeText}`}>
+                            <span className={`h-1 w-1 rounded-full ${rivalStyle.dot}`} />
+                            {rival.brand}
+                          </span>
+                          <span className="text-[11px] text-[#78716C] font-mono">{rival.caffeine}mg</span>
+                        </div>
+                        <h5 className="mt-1 text-xs font-bold text-[#231915] truncate group-hover:text-[#D97757] transition-colors">
+                          {rival.name}
+                        </h5>
+                      </div>
+                      <span className="text-[11px] font-semibold text-[#78716C] group-hover:text-[#231915] shrink-0">
+                        비교 ➔
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Sticky Fixed Bottom Footer Action Button & Fade Mask */}
-        <div className="relative sticky bottom-0 z-20 border-t border-[#EFECE6] bg-[#FFFFFF] px-6 py-4 shadow-xs">
+        <div className="relative sticky bottom-0 z-20 border-t border-[#EFECE6] bg-[#FFFFFF] px-4 sm:px-6 pt-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:py-4 shadow-xs">
           {/* Subtle Top Gradient Fade Mask indicating more scrollable content above */}
           <div className="pointer-events-none absolute -top-4 left-0 right-0 h-4 bg-gradient-to-t from-black/5 to-transparent" />
 
@@ -242,7 +343,7 @@ export default function DrinkDetailModal({
             type="button"
             onClick={handleSubmit}
             disabled={Boolean(errorMessage) || isSuccess}
-            className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all ${
+            className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-xs sm:text-sm font-semibold transition-all break-keep whitespace-nowrap ${
               isSuccess
                 ? 'bg-[#5B7A5E] text-white shadow-sm'
                 : 'bg-[#231915] text-[#FAF8F5] hover:bg-[#3D2C24] shadow-xs'
