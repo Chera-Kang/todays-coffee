@@ -34,7 +34,8 @@ Thumbs.db
 
 # Temporary / Agent caches
 .gemini/
-.agents/
+.agents/*
+!.agents/rules/
 scratch/
 
 # Prompt and internal spec docs
