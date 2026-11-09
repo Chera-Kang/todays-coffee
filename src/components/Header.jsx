@@ -23,7 +23,7 @@ export default function Header({
           onClick={() => setActiveTab('recommendation')}
           className="flex cursor-pointer items-center gap-2.5 transition-opacity hover:opacity-85"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#231915] text-[#FAF8F5] shadow-xs">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2C1810] text-[#FAF8F5] shadow-xs">
             <Coffee className="h-5 w-5 stroke-[1.75]" />
           </div>
           <div>

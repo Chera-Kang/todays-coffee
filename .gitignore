@@ -40,6 +40,22 @@ scratch/
 
 # Prompt and internal spec docs
 05_todays-coffee_init.md
+08_practical_testing.md
+09_todays_coffee_playwright_lab.md
+10_todays_coffee_e2e_release_plan.md
 *_init.md
+study.md
+
+# Python / Virtual Environment
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Playwright & Test Artifacts / Reports
+test-results/
+playwright-report/
+allure-results/
+allure-report/
 
 

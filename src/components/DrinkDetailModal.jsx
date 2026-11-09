@@ -343,10 +343,12 @@ export default function DrinkDetailModal({
             type="button"
             onClick={handleSubmit}
             disabled={Boolean(errorMessage) || isSuccess}
-            className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-xs sm:text-sm font-semibold transition-all break-keep whitespace-nowrap ${
-              isSuccess
+            className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-xs sm:text-sm font-semibold transition-all break-keep whitespace-nowrap ${
+              Boolean(errorMessage)
+                ? 'bg-[#D6D3D1] text-[#A8A29E] cursor-not-allowed shadow-none'
+                : isSuccess
                 ? 'bg-[#5B7A5E] text-white shadow-sm'
-                : 'bg-[#231915] text-[#FAF8F5] hover:bg-[#3D2C24] shadow-xs'
+                : 'bg-[#231915] text-[#FAF8F5] hover:bg-[#3D2C24] shadow-xs cursor-pointer'
             }`}
           >
             {isSuccess ? (
