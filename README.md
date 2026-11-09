@@ -4,7 +4,8 @@
 > 국내 대표 8대 프랜차이즈의 음료 영양성분과 원두 데이터를 에디토리얼 UI로 탐색하고 일일 카페인을 기록하는 서비스이자, **경계값 분석(BVA), LocalStorage CRUD 및 클라이언트 상태 제어 로직을 실전 검증하기 위해 구축된 QA 자동화 테스트베드**입니다.
 
 🌐 **웹 서비스 바로가기**: [https://todays-coffee.pages.dev/](https://todays-coffee.pages.dev/)  
-🎬 **[Playwright] E2E Regression Test 시연 (오늘의 커피 | with Allure & Trace Viewer)**: [▶️ YouTube 바로보기](https://youtu.be/kdgQ6l0w_JI)
+🎬 **[VOD] Playwright E2E 회귀 테스트 시연 영상 (Allure & Trace Viewer)**: [▶️ YouTube 바로보기](https://youtu.be/kdgQ6l0w_JI)  
+📁 **Allure Report 및 Playwright Trace 결과 산출물**: [📂 Google Drive 바로가기](https://drive.google.com/drive/folders/1PykjxS6gSBaLlbLu98dLLxI5iT5WbGNU)
 
 ---
 
