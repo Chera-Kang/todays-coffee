@@ -15,6 +15,17 @@ DEFAULT_BASE_URL = "http://localhost:5173"
 
 
 @pytest.fixture(scope="session")
+def browser_type_launch_args(browser_type_launch_args):
+    """
+    브라우저 실행 창 크기를 FHD(1920x1080)에 최적화하여 헤디드 시연 시 시원한 크기로 팝업
+    """
+    return {
+        **browser_type_launch_args,
+        "args": ["--window-size=1920,1080"],
+    }
+
+
+@pytest.fixture(scope="session")
 def base_url() -> str:
     """
     테스트 전체 세션 동안 공유할 기본 웹 서비스 URL Fixture.
@@ -30,9 +41,9 @@ def clean_page(browser: Browser, base_url: str, request: pytest.FixtureRequest) 
     2. 테스트 시작과 동시에 백그라운드 블랙박스 트레이싱(Tracing)을 시작합니다.
     3. 테스트가 성공하면 트레이스를 조용히 폐기하고, 실패했을 때만 test-results/trace_*.zip으로 보존합니다.
     """
-    # 1. 독립된 시크릿 프로필(Context) 생성
+    # 1. 독립된 시크릿 프로필(Context) 생성 (YouTube/시연 표준 16:9 FHD 1920x1080)
     context: BrowserContext = browser.new_context(
-        viewport={"width": 1280, "height": 800},
+        viewport={"width": 1920, "height": 1080},
         locale="ko-KR",
     )
 

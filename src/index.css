@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* 로컬 Pretendard Variable 폰트 정의 (font-display: block으로 깜빡임 FOUT 원천 차단) */
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: block;
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
+
 @layer base {
   *, ::before, ::after {
     font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
