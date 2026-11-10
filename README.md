@@ -42,7 +42,7 @@
 클라이언트 사이드에서 발생할 수 있는 엣지 케이스, 상태 머신 및 데이터 영속성을 전수 검증하는 **8대 E2E 테스트 스위트 (총 17 Test Cases)**를 구축했습니다:
 
 - **BrowserContext 세션 격리 (`scope="function"`)**: 테스트마다 독립된 세션을 생성하여 로컬스토리지 데이터 간섭과 Flaky 현상을 방지
-- **Retain-on-Failure 스마트 트레이싱**: 성공한 테스트 로그는 정리하고, **실패(FAILED)한 테스트의 Trace 파일(`test-results/trace_*.zip`)만 자동 저장**하여 디버깅 효율 극대화
+- **Retain-on-Failure 스마트 트레이싱**: 성공한 테스트 로그는 정리하고, **실패(FAILED)한 테스트의 Trace 파일(`test-results/trace_*.zip`)만 자동 저장**하여 디버깅 시간 단축 및 스토리지 효율화
 - **4대 핵심 검증 하이라이트**:
   1. **BVA 경계값 분석**: 150mg ➔ 300mg(안전) ➔ 450mg(초과) 상태 전이 시 삼각 경고 배지(TriangleAlert) 노출 및 초과 게이지 연동 검증
   2. **CRUD 전체 생명주기**: 공백/특수문자 입력 방어(Negative) ➔ 새로고침(F5) 메모 유지(Read/Persistence) ➔ 트래커 휴지통 삭제 및 섭취량 실시간 차감(Delete)
