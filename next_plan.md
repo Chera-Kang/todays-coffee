@@ -11,6 +11,7 @@
 - [x] **History API 라우팅 & 메뉴별 Page화**: URL 해시 연동, 404 Blank 페이지 및 자동 복귀
 - [x] **4대 탭 대칭 컴포넌트 분리**: `RecommendationView`, `DrinksExploreView`, `BeanGuideView`, `BrandCompareView`
 - [x] **상태 관리 & 자정 자동 초기화**: LocalStorage 기반 CRUD, 유효성 검증, 자정 경과 시 실시간 데일리 리셋
+- [x] **Playwright E2E 테스트베드 & POM 아키텍처**: 8대 스위트(17 TCs) 구축, `BasePage` 상속·모달 객체(`DrinkDetailModal`, `TrackerModal`) 분리 및 Allure·Trace Viewer 연동
 
 ---
 
@@ -166,7 +167,7 @@
 
 ---
 
-> **기록 일시**: 2026-11-09  
+> **기록 일시**: 2026-11-11  
 > **프로젝트**: 오늘의커피 (Todays-Coffee)  
 > **문서 버전**: v1.4.0 (Track 6: API Contract Testing & 웰니스/플레이버 태그 추가)
 

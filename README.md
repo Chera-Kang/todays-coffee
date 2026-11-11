@@ -13,9 +13,9 @@
 
 - **Frontend Core**: React 19 (Vite), Tailwind CSS v4, Pretendard Variable 웹폰트
 - **Design System**: Warm Cafe Minimalism (`#FAF8F5`, `#2C1810`), Lucide Line Icons
-- **E2E Automation**: Python 3.12, Playwright (`playwright-python`), Pytest (17 Test Cases)
+- **E2E Automation**: Python 3.12, Playwright (`playwright-python`), Pytest (17 Test Cases, POM)
 - **Reporting & Debugging**: Allure Report Framework, Playwright Trace Viewer
-- **Architecture**: No-Backend (JSON 기반 데이터 관리 + LocalStorage) + BrowserContext 세션 격리
+- **Architecture**: No-Backend (JSON 기반 데이터 관리 + LocalStorage) + POM 계층 설계 & BrowserContext 세션 격리
 
 ---
 
@@ -41,6 +41,9 @@
 
 클라이언트 사이드에서 발생할 수 있는 엣지 케이스, 상태 머신 및 데이터 영속성을 전수 검증하는 **8대 E2E 테스트 스위트 (총 17 Test Cases)**를 구축했습니다:
 
+- **Page Object Model (POM) 계층 설계 (`tests/e2e/pages/`)**:
+  - **상속 기반 페이지 분리**: 공통 헤더·네비게이션·트래커를 담은 `BasePage`를 기준으로 `ExplorePage`, `BeanGuidePage`, `BrandComparePage`가 상속 확장
+  - **모달 객체 캡슐화**: 재사용 모달(`DrinkDetailModal`, `TrackerModal`)의 컨테이너 스코핑 및 비동기 모달 닫힘 대기 처리를 캡슐화해 테스트 가독성과 UI 변경 대응력 확보
 - **BrowserContext 세션 격리 (`scope="function"`)**: 테스트마다 독립된 세션을 생성하여 로컬스토리지 데이터 간섭과 Flaky 현상을 방지
 - **Retain-on-Failure 스마트 트레이싱**: 성공한 테스트 로그는 정리하고, **실패(FAILED)한 테스트의 Trace 파일(`test-results/trace_*.zip`)만 자동 저장**하여 디버깅 시간 단축 및 스토리지 효율화
 - **4대 핵심 검증 하이라이트**:
